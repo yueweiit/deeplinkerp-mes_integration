@@ -2,13 +2,15 @@
 
 connect to mes
 
+独立仓库为 [yueweiit/deeplinkerp-mes_integration](https://github.com/yueweiit/deeplinkerp-mes_integration)，开发主线和 PR 目标均为 `main`。Frappe App 名保持 `mes_integration`。
+
 ### Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch main
+bench get-app --branch main mes_integration https://github.com/yueweiit/deeplinkerp-mes_integration.git
 bench install-app mes_integration
 ```
 
