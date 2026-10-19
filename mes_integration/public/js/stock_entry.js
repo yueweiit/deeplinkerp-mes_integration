@@ -101,11 +101,11 @@ function load_mes_integration_enabled(frm) {
 	frm._mes_integration_enabled = false;
 	frm._mes_manufacturing_warehouse = null;
 
-	const enabledPromise = frappe.db
+	const enabledPromise = Promise.resolve(frappe.db
 		.get_value("Company", company, [
 			"custom_enable_mes_integration",
 			"custom_mes_manufacturing_warehouse"
-		])
+		]))
 		.then(function(r) {
 			const value = r && r.message ? r.message.custom_enable_mes_integration : 0;
 			const manufacturingWarehouse = r && r.message

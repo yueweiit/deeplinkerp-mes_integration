@@ -94,8 +94,8 @@ function load_mes_material_request_integration_enabled(frm) {
 	frm._mes_integration_company = company;
 	frm._mes_integration_enabled = false;
 
-	const enabled_promise = frappe.db
-		.get_value("Company", company, "custom_enable_mes_integration")
+	const enabled_promise = Promise.resolve(frappe.db
+		.get_value("Company", company, "custom_enable_mes_integration"))
 		.then(function(r) {
 			const value = r && r.message ? r.message.custom_enable_mes_integration : 0;
 			const enabled = cint(value) === 1;

@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from requests.exceptions import RequestException
 
 import frappe
+from frappe import _
 from frappe.utils import cint, flt, get_request_session, get_time, getdate, now
 
 from erpnext.stock.doctype.item.item import get_item_defaults
@@ -96,7 +97,7 @@ def push_to_mes(stock_entry_name):
 
     return {
         "status": "success",
-        "message": f"库存移动单 {stock_entry_name} 已成功推送到 DLM",
+        "message": _("库存移动单 {0} 已成功推送到 DLM").format(stock_entry_name),
         "mes_status": "Pushed",
         "processed": get_dlm_processed_count(response),
         "trace_id": response.get("traceId"),
@@ -346,7 +347,7 @@ def reset_mes_status(stock_entry_name):
         if not is_mes_source_stock_entry(stock_entry):
             return {
                 "status": "skipped",
-                "message": "手动物料移动无需重置 DLM 状态",
+                "message": _("手动物料移动无需重置 DLM 状态"),
             }
 
         stock_entry.check_permission("write")
@@ -355,13 +356,13 @@ def reset_mes_status(stock_entry_name):
 
         return {
             "status": "success",
-            "message": f"库存转移单 {stock_entry_name} 的 MES 状态已重置为未推送",
+            "message": _("库存转移单 {0} 的 MES 状态已重置为未推送").format(stock_entry_name),
             "mes_status": "Unpushed"
         }
 
     return {
         "status": "skipped",
-        "message": "无需重置"
+        "message": _("无需重置")
     }
 
 SEMI_FINISHED_GOODS_RECEIPT = "Semi Finished Goods Receipt"
@@ -1348,7 +1349,7 @@ def push_stock_entry_status_to_mes(
 
     return {
         "status": "success",
-        "message": f"入库单 {stock_entry.name} 状态已成功回写 MES",
+        "message": _("入库单 {0} 状态已成功回写 MES").format(stock_entry.name),
         "trace_id": response.get("traceId"),
         "timestamp": now(),
     }

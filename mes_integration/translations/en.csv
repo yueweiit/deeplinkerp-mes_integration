@@ -1,0 +1,242 @@
+CRM 销售订单号 {0} 对应多张 ERP 销售订单，无法安全关联,"CRM Sales Order number {0} corresponds to multiple ERP Sales Order, which cannot be safely associated"
+DLM 发料回调业务状态异常：{0},DLM Issue callback service status abnormality: {0}
+DLM 发料回调失败,DLM Material sending callback failed
+DLM 发料回调字段不完整,DLM The delivery callback field is incomplete
+DLM 发料回调接口响应不是 JSON，请查看 Error Log,"DLM The response of the material sending callback interface is not JSON, please check the Error Log"
+DLM 发料回调接口响应格式异常,DLM The response format of the material delivery callback interface is abnormal.
+DLM 发料回调接口调用失败：{0},DLM Failed to call the material delivery callback interface: {0}
+DLM 推送已返回，但没有收到成功结果，请查看 Error Log 或浏览器控制台。,"DLM The push has been returned, but no successful result was received. Please check the Error Log or browser console."
+DLM: 已推送,DLM: Pushed
+DLM: 未推送,DLM: Not pushed
+ERP Sales Order {0} 状态：{1},ERP Sales Order {0} Status: {1}
+MES HTTP 状态码: {0},MES HTTP Status code: {0}
+MES 传入的物料移动必须是草稿状态,MES The incoming material movement must be in draft status
+MES 传入的物料需求必须是草稿状态,MES The incoming material requirement must be in draft status
+MES 入库幂等编号冲突,MES Inbound idempotent number conflict
+MES 入库接口仅支持移动类型：{0},MES The warehousing interface only supports mobile type: {0}
+MES 入库物料或仓库配置错误,MES Incoming material or warehouse configuration error
+MES 幂等请求号长度不能超过 140 个字符。,MES The length of the idempotent request number cannot exceed 140 characters.
+MES 推送的物料需求必须使用“发料并推送至 DLM”,"The material requirements pushed by MES must use ""issue materials and push to DLM"""
+MES 物料需求幂等编号冲突,MES Material requirement idempotent number conflict
+MES 状态回写业务状态异常：{0},MES Status writeback service status is abnormal: {0}
+MES 状态回写失败,MES status writeback failed
+MES 状态回写接口响应不是 JSON，请查看 Error Log,"MES status writeback interface response is not JSON, please check the Error Log"
+MES 状态回写接口响应格式异常,MES Status writeback interface response format abnormal
+MES 状态回写接口调用失败：{0},MES Status writeback interface call failed: {0}
+MES 系统,MES system
+MES 请求号 {0} 已存在，但对应物料需求尚未提交。请稍后重试。,"MES Request number {0} already exists, but the corresponding material requirement has not yet been submitted. Please try again later."
+MES 销售出库幂等编号冲突,MES Delivery Note idempotent number conflict
+MES 销售出库流程需要安装 crm_integration 应用。,The MES Delivery Note process requires the crm_integration application to be installed.
+MES 销售出库草稿接口已停用，请由 CRM 发货接口创建并提交销售出库。,MES Delivery Note draft interface has been deactivated. Please create and submit Delivery Note through CRM shipping interface.
+MES 门户地址未配置,MES portal address is not configured
+MES已汇报生产进度,MES has reported production progress
+MES操作,MES operation
+MES申请类别不支持,MES application category is not supported
+RQ 后台任务执行失败，但没有返回异常详情。,"RQ The background task failed to execute, but no exception details were returned."
+X-Idempotency-Key 必须与 requestId 一致。,X-Idempotency-Key must be consistent with requestId.
+items 中重复出现 operationId {0}。,operationId {0} appears repeatedly in items.
+items 中重复出现销售订单 {0}。,Sales Order {0} appears repeatedly in items.
+items 必须是非空数组。,items must be a non-empty array.
+items 第 {0} 项包含不支持的字段：{1}。,items Item {0} contains an unsupported field: {1}.
+items 第 {0} 项必须是对象。,items Item {0} must be an object.
+items[{0}].changes 包含不支持的字段：{1}。,items[{0}].changes contains unsupported field: {1}.
+items[{0}].changes 必须是非空对象。,items[{0}].changes must be a non-null object.
+items[{0}].sourceVersion 必须是大于 0 的整数。,items[{0}].sourceVersion must be an integer greater than 0.
+schemaVersion 必须为 1.0。,schemaVersion must be 1.0.
+sourceSystem 必须为 MES。,sourceSystem must be MES.
+{0} {1}个,{0} {1}
+{0} 不能为空。,{0} cannot be empty.
+{0} 不能包含首尾空格。,{0} cannot contain leading and trailing spaces.
+{0} 不能超过 {1} 个字符。,{0} cannot exceed {1} characters.
+{0} 包含不支持的字段：{1}。,{0} contains an unsupported field: {1}.
+{0} 必须同时包含 expectedValue 和 value。,{0} must contain both expectedValue and value.
+{0} 必须是 YYYY-MM-DD 格式。,{0} must be in the format of YYYY-MM-DD.
+{0} 必须是 YYYY-MM-DD 格式的字符串。,{0} must be a string in the format of YYYY-MM-DD.
+{0} 必须是字符串。,{0} must be a string.
+{0} 必须是对象。,{0} must be an object.
+{0} 必须是有效的 YYYY-MM-DD 日期。,{0} must be a valid YYYY-MM-DD date.
+{0} 必须是非空字符串。,{0} must be a non-empty string.
+一张物料移动只能回调一个 Material Request，当前包含：{0},"A material movement can only call back one Material Request, currently including: {0}"
+交期,Delivery date
+仓库 {0} 不可用于{1},Warehouse {0} is not available for {1}
+仓库 {0} 不可用于出库,Warehouse {0} cannot be used for outgoing warehouses
+仓库 {0} 不属于公司 {1},Warehouse {0} does not belong to the company {1}
+保存并提交,Save and Submit
+入库单 {0} 状态已成功回写 MES,Inbound order {0} status has been successfully written back to MES
+入库单已创建并提交。,The receipt order has been created and submitted.
+入库数量（库存单位）,Inbound quantity (Stock UOM)
+公司 {0} 未启用 MES 集成。,Company {0} MES integration is not enabled.
+剩余数量,Remaining quantity
+单位,Unit
+发料,hair material
+发料仓,Distribution bin
+发料并推送至DLM,Issue and push to DLM
+发料或推送过程中发生错误，请查看错误日志或联系管理员。,An error occurred during the sending or pushing process. Please check the error log or contact the administrator.
+只有 MES 来源的物料移动可以推送至 DLM,Only material movements from MES source can be pushed to DLM
+只有其他出库、工单发料、注塑发料可以推送至 DLM,"Only other outbound materials, work order material issuance, and injection molding material can be pushed to DLM"
+只有成品/半成品入库单支持 MES 状态回写,Only finished product/semi-finished product receipt documents support MES status writeback
+只有物料发料、工单发料、注塑发料可以生成物料移动,"Only material issuance, work order issuance, and injection molding can generate material movement."
+只能通过此接口创建 Material Request,Material Request can only be created through this interface
+只能通过此接口创建 Stock Entry,Stock Entry can only be created through this interface
+合计,total
+型号,Model
+型号代码,Model code
+备注,Remarks
+如果页面无法显示，请检查 MES 门户地址配置。,"If the page cannot be displayed, please check the MES portal address configuration."
+实际库存,Actual stock
+已停止或已取消的物料需求不能发料,Stopped or cancelled material requests cannot be issued
+已发料数量,Quantity of materials shipped
+已复用原入库单，未创建新单据。,The original receipt document has been reused and no new document has been created.
+库存移动单 {0} 已成功推送到 DLM,Inventory movement order {0} has been successfully pushed to DLM
+库存移动单必须已提交才能推送到 MES,Inventory movement orders must have been submitted before they can be pushed to MES
+库存转移单 {0} 的 MES 状态已重置为未推送,The MES status of inventory transfer order {0} has been reset to Not Pushed
+当前物料在物料具体明细中没有记录,The current material is not recorded in the material details
+当前用户没有 MES 接口调用权限,The current user does not have the MES interface calling permission
+当前用户没有创建物料移动的权限,The current user does not have permission to create material movements
+当前用户缺少 Bin 的读取权限,The current user lacks read permission for Bin
+当前用户缺少 Item 的读取权限,The current user lacks read permission for Item
+当前用户缺少 {0} 的 {1} 权限,The current user lacks the {1} permission for {0}
+成功,success
+成品货号,Finished product item number
+手动创建的物料需求不能推送至 DLM，请生成物料移动,"Manually created material requirements cannot be pushed to DLM, please generate a material move"
+手动物料移动无需重置 DLM 状态,No need to reset DLM status for manual material movement
+批量处理完成,Batch processing completed
+批量处理完成（部分失败）,Batch processing completed (partial failure)
+推送至 DLM 失败，请查看 Error Log。,"Pushing to DLM failed, please check the Error Log."
+推送至DLM,Push to DLM
+推送至MES,Push to MES
+提交,Submit
+提交并发料,Submit and Issue Materials
+提示,Tips
+操作失败,Operation failed
+数量,Quantity
+新窗口打开,New window opens
+无权访问该物料需求异步任务,Do not have permission to access the material requirements asynchronous task
+无法读取选中的物料需求。,Unable to read selected material requirements.
+无需重置,No need to reset
+明细行号,Detail line number
+是否立即发料？,Distribute materials immediately?
+是否立即推送至DLM？,Push to DLM now?
+未找到 ERP 销售订单或 CRM 销售订单号 {0},Not found ERP Sales Order or CRM Sales Order number {0}
+未找到仓库 {0},Warehouse {0} not found
+未找到物料需求异步任务 {0},Material requirements asynchronous task {0} not found
+未找到销售订单 {0},Sales Order {0} not found
+本次发料数量,Issue quantity
+本次生产：{0},This production: {0}
+正在创建物料移动并推送至 DLM，请稍候...,Creating the stock movement and pushing it to DLM. Please wait...
+正在加载 MES 系统,Loading MES system
+正在批量发料并推送至 DLM，请稍候...,"Materials are being sent in batches and pushed to DLM, please wait..."
+正在推送至 DLM，请稍候...,Pushing to DLM. Please wait...
+此库存移动单已推送至 MES，无需重复推送,"This inventory movement order has been pushed to MES, no need to push it again"
+每批最多允许 {0} 张销售订单。,A maximum of {0} sheets and Sales Order are allowed per batch.
+没有可发料的明细,There are no issuable items
+没有可发料的物料需求。,There are no material requirements to issue.
+没有可推送到 DLM 的发料明细,There is no delivery details that can be pushed to DLM
+物料,Item
+物料 {0} 不在销售订单 {1} 的明细中,Material {0} is not in the details of Sales Order {1}
+物料 {0} 出库数量 {1} 超过剩余可出库数量 {2},Material {0} outbound quantity {1} exceeds remaining outbound quantity {2}
+物料 {0} 的 MES 默认发料单位 {1} 缺少有效换算设置，已使用物料需求单位。,MES default issue unit {1} for material {0} lacks a valid conversion setting and the material requirement unit has been used.
+物料 {0} 缺少出库仓库,Material {0} is missing the outgoing warehouse
+物料 {0} 缺少出库仓库；请传 warehouse、设置物料默认仓库，或配置公司 MES 默认出库仓。,"Material {0} lacks an outbound warehouse; please pass warehouse, set the default warehouse for the material, or configure the default outbound warehouse for the company MES."
+物料 {0} 缺少单位 {1} 的换算设置,Material {0} is missing the conversion setting for unit {1}
+物料具体明细 - {0},Material details - {0}
+物料名称,Item name
+物料移动 {0} 已创建、提交并推送至 DLM。,"Material movement {0} is created, submitted and pushed to DLM."
+物料移动 {0} 已创建并提交，但推送至 DLM 失败，请手动推送。,"Material movement {0} has been created and submitted, but the push to DLM failed. Please push it manually."
+物料移动 {0} 草稿已生成。请确认后提交。,Material movement {0} draft has been generated. Please confirm and submit.
+物料移动公司必须与销售订单公司一致,Material moving company must be consistent with Sales Order company
+物料移动已提交。是否立即推送发料结果至 DLM？,The material movement has been submitted. Do you want to push the sending result to DLM immediately?
+物料移动已提交，但尚未获取正式单号。请刷新后再推送至 DLM。,"The material movement has been submitted, but the official order number has not yet been obtained. Please refresh before pushing to DLM."
+物料移动至少需要一行明细,Material movement requires at least one row of details
+物料移动草稿已创建，可在 ERP 审核后直接提交。,The material movement draft has been created and can be submitted directly after review by ERP.
+物料编码,Item code
+物料需求 {0} 已发料完成。,Material requirement {0} has been issued.
+物料需求 {0} 必须已提交。,Material requirement {0} must have been submitted.
+物料需求 {0} 没有可发料的明细。,Material requirement {0} has no details that can be issued.
+物料需求已创建并提交。,The material requirement has been created and submitted.
+物料需求已存在并返回原单据。,The material requirement already exists and the original document is returned.
+物料需求已提交。是否立即创建物料移动并发料？,The material requirement has been submitted. Do you want to create the material movement and issue the material immediately?
+物料需求已提交，出库单 {0} 已创建、提交并推送至 DLM。,"The material requirement has been submitted, and the outbound order {0} has been created, submitted and pushed to DLM."
+物料需求已提交，出库单 {0} 已创建并提交，但推送至 DLM 失败，请手动推送。,"The material requirement has been submitted, and the outbound order {0} has been created and submitted, but the push to DLM failed. Please push it manually."
+物料需求必须已提交,The material request must be submitted
+物料需求必须是草稿状态,Material requirements must be in draft status
+物料需求明细,Material requirements details
+物料需求明细 {0} 在本次发料中重复,Material requirement details {0} are repeated in this issue
+物料需求明细行号,Material requirement detail line number
+物料需求至少需要一行明细,Material requirements require at least one line of details
+生产信息,production information
+生产批次号,Production batch number
+生成物料移动,Create stock movement
+目标仓库,Target warehouse
+目标仓当前库存,Target warehouse current inventory
+确定,OK
+确认保存、提交并推送此物料移动至 DLM？,"Confirm to save, submit and push this material to DLM?"
+确认保存并提交此物料移动？,Confirm to save and submit this material move?
+确认提交此物料需求并立即发料？,Confirm to submit this material requirement and issue the material immediately?
+第 {0} 行出库数量必须大于 0,The outbound quantity in line {0} must be greater than 0
+第 {0} 行数量必须大于 0,The number of rows {0} must be greater than 0
+第 {0} 行本次发料数量 {1} 超过剩余数量 {2},The quantity of materials issued this time in row {0} {1} exceeds the remaining quantity {2}
+第 {0} 行本次发料数量不能超过剩余数量,The quantity of materials issued this time at line {0} cannot exceed the remaining quantity.
+第 {0} 行本次发料数量必须大于 0,The quantity of this issue in row {0} must be greater than 0
+第 {0} 行物料 {1} 不存在,Material {1} in row {0} does not exist
+第 {0} 行物料 {1} 发料数量 {2} 超过仓库 {3} 实际数量 {4},Line {0} material {1} issued quantity {2} exceeds warehouse {3} actual quantity {4}
+第 {0} 行物料 {1} 缺少目标仓库；请传 t_warehouse、设置物料默认仓库，或配置公司 MES 默认入库仓。,"The target warehouse for material {1} in line {0} is missing; please pass t_warehouse, set the default warehouse for the material, or configure the company's default warehouse MES."
+第 {0} 行物料编码与物料需求明细不一致,Line {0} line Item Code is inconsistent with the material requirement details
+第 {0} 行物料需求明细不存在或不属于当前物料需求,The material requirement details of row {0} do not exist or do not belong to the current material requirements.
+第 {0} 行物料需求格式不正确,The material requirement format at line {0} is incorrect.
+第 {0} 行缺少单位,Missing unit at line {0}
+第 {0} 行缺少单位换算系数，且物料 {1} 没有单位 {2} 的换算设置,"The unit conversion coefficient is missing in row {0}, and the material {1} does not have a conversion setting for the unit {2}."
+第 {0} 行缺少发料仓,The sending bin is missing at line {0}
+第 {0} 行缺少物料号,Material number missing at line {0}
+第 {0} 行缺少物料编码 item_code,Item Code item_code is missing at line {0}
+第 {0} 行缺少目标仓库,Target repository is missing at line {0}
+第 {0} 行至少需要来源仓库或目标仓库,Line {0} requires at least a source warehouse or a target warehouse
+等待 MES 销售订单修改幂等锁超时。,Waiting for MES Sales Order to modify the idempotent lock timeout.
+缺少 DLM 接口配置：dlm_material_issue_callback_url,Missing DLM interface configuration: dlm_material_issue_callback_url
+缺少 Delivery Note MES 幂等字段，请先执行 bench migrate。,"Delivery Note MES idempotent field is missing, please perform bench migrate first."
+缺少 MES 推送接口配置：mes_push_authorization,Missing MES push interface configuration: mes_push_authorization
+缺少 MES 状态回写接口配置：mes_status_callback_url,Missing MES status writeback interface configuration: mes_status_callback_url
+缺少 Material Request 数据或数据格式不正确,Material Request data is missing or incorrectly formatted
+缺少 Stock Entry 数据或数据格式不正确,Stock Entry data is missing or incorrectly formatted
+缺少 X-Idempotency-Key 请求头。,Missing X-Idempotency-Key request header.
+缺少 task_id 或 request_id,Missing task_id or request_id
+缺少发料明细或发料明细格式不正确,The issue details are missing or the format of the issue details is incorrect.
+缺少有效的 item_codes 参数,Missing valid item_codes parameter
+缺少物料移动 Purpose,Missing material movement Purpose
+缺少物料移动公司,Material moving company missing
+缺少物料移动公司，无法查询物料默认仓库,The material moving company is missing and the material default warehouse cannot be queried.
+缺少物料移动类型 stock_entry_type,Missing material movement type stock_entry_type
+缺少物料需求公司,Missing material requirements company
+缺少物料需求类型 material_request_type,Missing material requirement type material_request_type
+缺少请求数据或数据格式不正确,Request data is missing or incorrectly formatted
+缺少销售出库幂等请求号，请传 request_id 或 production_batch_no。,"If the Delivery Note idempotent request number is missing, please send request_id or production_batch_no."
+缺少销售订单编号 sales_order,Missing Sales Order number sales_order
+订单数量,Order quantity
+请先保存物料移动并获取正式单号后再推送至 DLM。,Please save the material movement and obtain the official order number before pushing it to DLM.
+请先关联原生 Material Request，再推送至 DLM,"Please associate the native Material Request first, and then push it to DLM"
+请先选择物料编码,Please select Item Code first
+请先选择物料需求。,Please select material requirements first.
+请求体包含不支持的字段：{0}。,The request body contains an unsupported field: {0}.
+请求体必须是 JSON 对象。,The request body must be a JSON object.
+请确认本次发料数量和发料仓，确认后将自动创建并提交物料移动，然后推送至 DLM。,"Please confirm the quantity and delivery bin for this issue. After confirmation, the material movement will be automatically created and submitted, and then pushed to DLM."
+请选择至少一个物料需求。,Please select at least one material requirement.
+部分完成,Partially complete
+销售出库幂等请求号长度不能超过 140 个字符。,The length of Delivery Note idempotent request number cannot exceed 140 characters.
+销售出库明细不能为空,Delivery Note details cannot be empty
+销售订单 {0} 必须已提交,Sales Order {0} must have been submitted
+销售订单 {0} 状态为 {1}，不允许创建出库草稿,Sales Order {0} The status is {1} and it is not allowed to create an outbound draft.
+错误,Error
+错误信息: {0},Error message: {0}
+错误码: {0},Error code: {0}
+需求单位,demand unit
+需求数量,Required quantity
+需求量,demand
+预计剩余,Estimated remaining
+颜色,color
+颜色代码,color code
+默认发料单位提示,Default issuing unit prompt
+MES 物料需求任务,MES Material Request Tasks
+MES 集成日志,MES Integration Logs
+物料具体明细,Material Details
+MES默认发料单位,MES Default Issue Unit
+MES物料申请发料窗口使用的默认单位。该单位必须存在于物料的单位换算明细中，或与库存单位一致。,Default unit used in the MES material request issue dialog. This unit must be present in the item's unit conversion details or match the stock unit.

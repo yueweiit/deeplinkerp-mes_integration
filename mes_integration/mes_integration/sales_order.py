@@ -170,7 +170,7 @@ def build_sales_order_status_payload(
         "salesOrderStatus": sales_order_status,
         "erpSalesOrderStatus": sales_order_status,
         "message": (
-            f"ERP Sales Order {sales_order.name} 状态：{sales_order_status or ''}"
+            _("ERP Sales Order {0} 状态：{1}").format(sales_order.name, sales_order_status or '')
         ),
     }
 

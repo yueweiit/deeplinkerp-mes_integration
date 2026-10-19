@@ -67,3 +67,89 @@
 "缺少 MES 推送接口配置：mes_push_authorization","缺少 MES 推送接口配置：mes_push_authorization"
 "入库数量（库存单位）","入库数量（库存单位）"
 "目标仓当前库存","目标仓当前库存"
+Applied Value,应用价值
+Attempts,尝试
+Category backfill review digest mismatch,类别回填评论摘要不匹配
+Category backfill target changed; preview again,类别回填目标已更改；再次预览
+Company,公司
+Could not find UOM {0} in row {1},在 {1} 行中找不到 UOM {0}
+Create,创建
+Current Value,当前值
+Customer,客户
+Detail Count,详细计数
+Direction,方向
+Duplicate category backfill targets,重复的类别回填目标
+Error Code,错误代码
+Error Message,错误信息
+Event,事件
+Expected Value,期望值
+External Order ID,外部订单 ID
+Failed,失败
+Failed to create Material Request creation log,无法创建物料请求创建日志
+Field Key,字段键
+Finished At,完成于
+From Warehouse,发料仓
+Get Items From,选物料
+HTTP Status Code,HTTP 状态代码
+Inbound,入境
+Issued,已发料
+Item Count,商品数量
+MES Material Request Bin sync encountered a deadlock,MES 物料请求 Bin 同步遇到死锁
+MES Material Request Item Detail,MES 物料请求项目详细信息
+MES Sales Order Field Change Batch,MES 销售订单字段更改批次
+MES Sales Order Field Change Operation,MES 销售订单字段变更操作
+Material Request,物料需求
+Material Request Item,物料需求明细
+Message,信息
+Missing category backfill evidence,缺少类别回填证据
+ODT,ODT
+Operation ID,工序ID
+Order No,订单编号
+Outbound,出境
+Partially Ordered,部分已下单
+Payload,有效载荷
+Pending,待处理
+Processed,已加工
+Processed By,处理者
+Processing,处理
+Purpose,目的
+Queued,排队
+Reference Doctype,源单据类型
+Reference Name,源单据
+Request Hash,请求哈希值
+Request ID,请求ID
+Request Key,请求密钥
+Request Payload,请求有效负载
+Request URL,请求URL
+Requested Value,要求的值
+Response Payload,响应负载
+Result,结果
+Retryable,可重试
+Row {0}: Issue Qty cannot be negative,行 {0}：发行数量不能为负数
+Row {0}: Item Code must match Material Request Item Row {1},行 {0}：物料代码必须与物料请求物料行 {1} 匹配
+Row {0}: Item Code {1} is not in this Material Request,行 {0}：物料代码 {1} 不在该物料请求中
+Row {0}: Material Request Item Row {1} does not exist,行 {0}：物料请求项目行 {1} 不存在
+Row {0}: Order Qty cannot be negative,行 {0}：订单数量不能为负数
+Sales Order,销售订单
+Schema Version,架构版本
+Set From Warehouse,发料仓
+Source,来源
+Source System,源系统
+Source Version,源版本
+Started At,开始于
+Status,状态
+Stopped,已停止
+Submit,提交
+Submitted By,提交者
+Success,成功
+Timed out waiting for MES Material Request inventory lock,等待 MES 物料请求库存锁定超时
+Trace ID,追踪ID
+Trace ID: {0},跟踪 ID: {0}
+Unsupported MES issue category,不支持的 MES 问题类别
+User,用户
+conflict,冲突
+deliveryDate,deliveryDate
+failed,失败
+odtNo,odtNo
+processed,加工过的
+success,成功

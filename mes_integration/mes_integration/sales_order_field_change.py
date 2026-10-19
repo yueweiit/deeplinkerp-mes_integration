@@ -1,3 +1,6 @@
+
+from frappe import _
+
 import hashlib
 import json
 from contextlib import contextmanager
@@ -135,22 +138,22 @@ def get_batch_payload(data=None):
 
 def validate_batch_payload(payload):
 	if not isinstance(payload, dict):
-		frappe.throw("请求体必须是 JSON 对象。")
+		frappe.throw(_("请求体必须是 JSON 对象。"))
 
 	unsupported = set(payload) - {"schemaVersion", "sourceSystem", "requestId", "items"}
 	if unsupported:
-		frappe.throw(f"请求体包含不支持的字段：{', '.join(sorted(unsupported))}。")
+		frappe.throw(_("请求体包含不支持的字段：{0}。").format(', '.join(sorted(unsupported))))
 	if payload.get("schemaVersion") != "1.0":
-		frappe.throw("schemaVersion 必须为 1.0。")
+		frappe.throw(_("schemaVersion 必须为 1.0。"))
 	if payload.get("sourceSystem") != "MES":
-		frappe.throw("sourceSystem 必须为 MES。")
+		frappe.throw(_("sourceSystem 必须为 MES。"))
 	validate_identifier(payload.get("requestId"), "requestId")
 
 	items = payload.get("items")
 	if not isinstance(items, list) or not items:
-		frappe.throw("items 必须是非空数组。")
+		frappe.throw(_("items 必须是非空数组。"))
 	if len(items) > MAX_BATCH_ITEMS:
-		frappe.throw(f"每批最多允许 {MAX_BATCH_ITEMS} 张销售订单。")
+		frappe.throw(_("每批最多允许 {0} 张销售订单。").format(MAX_BATCH_ITEMS))
 
 	seen_orders = set()
 	seen_operations = set()
@@ -160,27 +163,27 @@ def validate_batch_payload(payload):
 
 def validate_batch_item(item, index, seen_orders, seen_operations):
 	if not isinstance(item, dict):
-		frappe.throw(f"items 第 {index} 项必须是对象。")
+		frappe.throw(_("items 第 {0} 项必须是对象。").format(index))
 	unsupported = set(item) - {"externalOrderId", "orderNo", "sourceVersion", "changes"}
 	if unsupported:
-		frappe.throw(f"items 第 {index} 项包含不支持的字段：{', '.join(sorted(unsupported))}。")
+		frappe.throw(_("items 第 {0} 项包含不支持的字段：{1}。").format(index, ', '.join(sorted(unsupported))))
 
 	external_order_id = validate_identifier(item.get("externalOrderId"), f"items[{index}].externalOrderId")
 	validate_identifier(item.get("orderNo"), f"items[{index}].orderNo")
 	if external_order_id in seen_orders:
-		frappe.throw(f"items 中重复出现销售订单 {external_order_id}。")
+		frappe.throw(_("items 中重复出现销售订单 {0}。").format(external_order_id))
 	seen_orders.add(external_order_id)
 
 	source_version = item.get("sourceVersion")
 	if isinstance(source_version, bool) or not isinstance(source_version, int) or source_version < 1:
-		frappe.throw(f"items[{index}].sourceVersion 必须是大于 0 的整数。")
+		frappe.throw(_("items[{0}].sourceVersion 必须是大于 0 的整数。").format(index))
 
 	changes = item.get("changes")
 	if not isinstance(changes, dict) or not changes:
-		frappe.throw(f"items[{index}].changes 必须是非空对象。")
+		frappe.throw(_("items[{0}].changes 必须是非空对象。").format(index))
 	unsupported_changes = set(changes) - set(FIELD_SETTINGS)
 	if unsupported_changes:
-		frappe.throw(f"items[{index}].changes 包含不支持的字段：{', '.join(sorted(unsupported_changes))}。")
+		frappe.throw(_("items[{0}].changes 包含不支持的字段：{1}。").format(index, ', '.join(sorted(unsupported_changes))))
 
 	for field_key, change in changes.items():
 		validate_field_change(change, index, field_key, seen_operations)
@@ -189,16 +192,16 @@ def validate_batch_item(item, index, seen_orders, seen_operations):
 def validate_field_change(change, item_index, field_key, seen_operations):
 	path = f"items[{item_index}].changes.{field_key}"
 	if not isinstance(change, dict):
-		frappe.throw(f"{path} 必须是对象。")
+		frappe.throw(_("{0} 必须是对象。").format(path))
 	unsupported = set(change) - {"operationId", "expectedValue", "value"}
 	if unsupported:
-		frappe.throw(f"{path} 包含不支持的字段：{', '.join(sorted(unsupported))}。")
+		frappe.throw(_("{0} 包含不支持的字段：{1}。").format(path, ', '.join(sorted(unsupported))))
 	if "expectedValue" not in change or "value" not in change:
-		frappe.throw(f"{path} 必须同时包含 expectedValue 和 value。")
+		frappe.throw(_("{0} 必须同时包含 expectedValue 和 value。").format(path))
 
 	operation_id = validate_identifier(change.get("operationId"), f"{path}.operationId")
 	if operation_id in seen_operations:
-		frappe.throw(f"items 中重复出现 operationId {operation_id}。")
+		frappe.throw(_("items 中重复出现 operationId {0}。").format(operation_id))
 	seen_operations.add(operation_id)
 
 	if field_key == "odtNo":
@@ -211,11 +214,11 @@ def validate_field_change(change, item_index, field_key, seen_operations):
 
 def validate_identifier(value, fieldname):
 	if not isinstance(value, str) or not value.strip():
-		frappe.throw(f"{fieldname} 必须是非空字符串。")
+		frappe.throw(_("{0} 必须是非空字符串。").format(fieldname))
 	if value != value.strip():
-		frappe.throw(f"{fieldname} 不能包含首尾空格。")
+		frappe.throw(_("{0} 不能包含首尾空格。").format(fieldname))
 	if len(value) > MAX_ID_LENGTH:
-		frappe.throw(f"{fieldname} 不能超过 {MAX_ID_LENGTH} 个字符。")
+		frappe.throw(_("{0} 不能超过 {1} 个字符。").format(fieldname, MAX_ID_LENGTH))
 	return value
 
 
@@ -223,24 +226,24 @@ def validate_odt_value(value, fieldname, allow_empty):
 	if value is None and allow_empty:
 		return
 	if not isinstance(value, str):
-		frappe.throw(f"{fieldname} 必须是字符串。")
+		frappe.throw(_("{0} 必须是字符串。").format(fieldname))
 	if not allow_empty and not value.strip():
-		frappe.throw(f"{fieldname} 不能为空。")
+		frappe.throw(_("{0} 不能为空。").format(fieldname))
 	if len(value) > MAX_ID_LENGTH:
-		frappe.throw(f"{fieldname} 不能超过 {MAX_ID_LENGTH} 个字符。")
+		frappe.throw(_("{0} 不能超过 {1} 个字符。").format(fieldname, MAX_ID_LENGTH))
 
 
 def validate_date_value(value, fieldname, allow_empty):
 	if value in (None, "") and allow_empty:
 		return
 	if not isinstance(value, str):
-		frappe.throw(f"{fieldname} 必须是 YYYY-MM-DD 格式的字符串。")
+		frappe.throw(_("{0} 必须是 YYYY-MM-DD 格式的字符串。").format(fieldname))
 	try:
 		parsed = datetime.strptime(value, "%Y-%m-%d").date()
 	except ValueError:
-		frappe.throw(f"{fieldname} 必须是有效的 YYYY-MM-DD 日期。")
+		frappe.throw(_("{0} 必须是有效的 YYYY-MM-DD 日期。").format(fieldname))
 	if parsed.isoformat() != value:
-		frappe.throw(f"{fieldname} 必须是 YYYY-MM-DD 格式。")
+		frappe.throw(_("{0} 必须是 YYYY-MM-DD 格式。").format(fieldname))
 
 
 def validate_batch_idempotency_header(request_id):
@@ -248,9 +251,9 @@ def validate_batch_idempotency_header(request_id):
 		return
 	header = (frappe.get_request_header("X-Idempotency-Key") or "").strip()
 	if not header:
-		frappe.throw("缺少 X-Idempotency-Key 请求头。")
+		frappe.throw(_("缺少 X-Idempotency-Key 请求头。"))
 	if header != request_id:
-		frappe.throw("X-Idempotency-Key 必须与 requestId 一致。")
+		frappe.throw(_("X-Idempotency-Key 必须与 requestId 一致。"))
 
 
 def process_field_change_with_savepoint(request_id, item, field_key, change, index):
@@ -698,7 +701,7 @@ def lock_field_change_keys(keys):
 		if not result or cint(result[0][0]) != 1:
 			for lock_name in reversed(acquired):
 				frappe.db.sql("SELECT RELEASE_LOCK(%s)", (lock_name,))
-			raise frappe.QueryDeadlockError("等待 MES 销售订单修改幂等锁超时。")
+			raise frappe.QueryDeadlockError(_("等待 MES 销售订单修改幂等锁超时。"))
 		acquired.append(lock_name)
 
 	def release_locks():

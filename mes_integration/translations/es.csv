@@ -179,3 +179,182 @@ MES操作,Operaciones MES
 批量处理完成,Procesamiento por lotes terminado
 Stopped,Detenido
 Pending,Pendiente
+Applied Value,Valor aplicado
+Attempts,Intentos
+CRM 销售订单号 {0} 对应多张 ERP 销售订单，无法安全关联,"CRM Pedido de Venta El número {0} corresponde a varios ERP Pedido de Venta, que no se pueden asociar de forma segura."
+Category backfill review digest mismatch,El resumen de revisión de reposición de categorías no coincide
+Category backfill target changed; preview again,Se cambió el objetivo de reabastecimiento de categoría; vista previa de nuevo
+Company,Compañía
+Could not find UOM {0} in row {1},No se pudo encontrar UOM {0} en la fila {1}
+Create,Crear
+Current Value,Valor actual
+Customer,Cliente
+Detail Count,Recuento de detalles
+Direction,Dirección
+Duplicate category backfill targets,Objetivos de reabastecimiento de categorías duplicadas
+ERP Sales Order {0} 状态：{1},ERP Orden de venta {0} Estado: {1}
+Error Code,Código de error
+Error Message,Mensaje de error
+Event,Evento
+Expected Value,Valor esperado
+External Order ID,Orden externa ID
+Failed,Fallido
+Failed to create Material Request creation log,No se pudo crear el registro de creación de solicitud de material
+Field Key,Clave de campo
+Finished At,Terminado el
+From Warehouse,De Almacén
+Get Items From,Obtener artículos de
+HTTP Status Code,Código de estado HTTP
+Inbound,entrante
+Issued,Emitido
+Item Count,Recuento de artículos
+MES Material Request Bin sync encountered a deadlock,MES La sincronización del contenedor de solicitudes de material encontró un punto muerto
+MES Material Request Item Detail,Detalle del artículo de solicitud de material MES
+MES Sales Order Field Change Batch,MES Lote de cambio de campo de orden de venta
+MES Sales Order Field Change Operation,MES Operación de cambio de campo de orden de venta
+MES 入库幂等编号冲突,MES Conflicto de número idempotente entrante
+MES 入库物料或仓库配置错误,MES Error de configuración de almacén o material entrante
+MES 幂等请求号长度不能超过 140 个字符。,MES La longitud del número de solicitud idempotente no puede exceder los 140 caracteres.
+MES 推送的物料需求必须使用“发料并推送至 DLM”,"Los requisitos de material impulsados por MES deben utilizar ""materiales de emisión y envío a DLM"""
+MES 物料需求幂等编号冲突,MES Conflicto de número idempotente de requisito de material
+MES 状态回写业务状态异常：{0},MES El estado del servicio de reescritura es anormal: {0}
+MES 状态回写失败,Error en la reescritura del estado MES
+MES 状态回写接口响应不是 JSON，请查看 Error Log,La respuesta de la interfaz de reescritura de estado MES no es JSON; verifique el registro de errores
+MES 状态回写接口响应格式异常,MES Formato de respuesta de interfaz de reescritura de estado anormal
+MES 状态回写接口调用失败：{0},MES Error en la llamada a la interfaz de reescritura de estado: {0}
+MES 请求号 {0} 已存在，但对应物料需求尚未提交。请稍后重试。,"MES El número de solicitud {0} ya existe, pero aún no se ha enviado el requisito de material correspondiente. Inténtelo de nuevo más tarde."
+MES 销售出库幂等编号冲突,MES Nota de Entrega conflicto de número idempotente
+MES 销售出库流程需要安装 crm_integration 应用。,El proceso MES Nota de Entrega requiere que se instale la aplicación crm_integration.
+MES 销售出库草稿接口已停用，请由 CRM 发货接口创建并提交销售出库。,MES Nota de Entrega La interfaz de borrador ha sido desactivada. Cree y envíe Nota de Entrega a través de la interfaz de envío CRM.
+MES申请类别不支持,La categoría de aplicación MES no es compatible
+Material Request,Solicitud de Materiales
+Material Request Item,Requisición de Materiales del Producto
+Message,Mensaje
+Missing category backfill evidence,Falta evidencia de reposición de categoría
+ODT,ODT
+Operation ID,ID de operación
+Order No,No. Orden
+Outbound,saliente
+Partially Ordered,Parcialmente ordenado
+Payload,Carga útil
+Processed,Procesado
+Processed By,Procesado por
+Processing,Procesando
+Purpose,Propósito
+Queued,En cola
+RQ 后台任务执行失败，但没有返回异常详情。,"RQ La tarea en segundo plano no se pudo ejecutar, pero no se devolvieron detalles de la excepción."
+Reference Doctype,Referencia a 'DocType'
+Reference Name,Nombre de referencia
+Request Hash,Solicitar hash
+Request ID,ID de la Solicitud
+Request Key,Solicitar clave
+Request Payload,Solicitar carga útil
+Request URL,URL de Solicitud
+Requested Value,Valor solicitado
+Response Payload,Carga útil de respuesta
+Result,Resultado
+Retryable,Reintentable
+Row {0}: Issue Qty cannot be negative,Fila {0}: La cantidad de emisión no puede ser negativa
+Row {0}: Item Code must match Material Request Item Row {1},Fila {0}: El código de artículo debe coincidir con la fila de artículo de solicitud de material {1}
+Row {0}: Item Code {1} is not in this Material Request,Fila {0}: El código de artículo {1} no está en esta solicitud de material
+Row {0}: Material Request Item Row {1} does not exist,Fila {0}: La fila del artículo de solicitud de material {1} no existe
+Row {0}: Order Qty cannot be negative,Fila {0}: La cantidad del pedido no puede ser negativa
+Sales Order,Orden de venta (OV)
+Schema Version,Versión del esquema
+Set From Warehouse,Establecer desde almacén
+Source,Fuente
+Source System,Sistema fuente
+Source Version,Versión fuente
+Started At,Empezó a las
+Status,Estado
+Submit,Enviar
+Submitted By,Enviado por
+Success,Éxito
+Timed out waiting for MES Material Request inventory lock,Se agotó el tiempo de espera para el bloqueo de inventario de solicitud de material MES
+Trace ID,ID de Seguimiento
+Trace ID: {0},Traza ID: {0}
+Unsupported MES issue category,Categoría de problema MES no compatible
+User,Usuario
+X-Idempotency-Key 必须与 requestId 一致。,X-Idempotency-Key debe ser coherente con requestId.
+conflict,conflicto
+deliveryDate,deliveryDate
+failed,fallido
+items 中重复出现 operationId {0}。,operationId {0} aparece repetidamente en los elementos.
+items 中重复出现销售订单 {0}。,Pedido de Venta {0} aparece repetidamente en los elementos.
+items 必须是非空数组。,Los elementos deben ser una matriz que no esté vacía.
+items 第 {0} 项包含不支持的字段：{1}。,artículos El artículo {0} contiene un campo no admitido: {1}.
+items 第 {0} 项必须是对象。,artículos El artículo {0} debe ser un objeto.
+items[{0}].changes 包含不支持的字段：{1}。,items[{0}].changes contiene un campo no admitido: {1}.
+items[{0}].changes 必须是非空对象。,items[{0}].changes debe ser un objeto no nulo.
+items[{0}].sourceVersion 必须是大于 0 的整数。,items[{0}].sourceVersion debe ser un número entero mayor que 0.
+odtNo,odtNo
+processed,procesado
+schemaVersion 必须为 1.0。,"schemaVersion debe ser 1,0."
+sourceSystem 必须为 MES。,sourceSystem debe ser MES.
+success,éxito
+{0} 不能为空。,{0} no puede estar vacío.
+{0} 不能包含首尾空格。,{0} no puede contener espacios iniciales y finales.
+{0} 不能超过 {1} 个字符。,{0} no puede exceder los caracteres {1}.
+{0} 包含不支持的字段：{1}。,{0} contiene un campo no admitido: {1}.
+{0} 必须同时包含 expectedValue 和 value。,{0} debe contener tanto expectedValue como valor.
+{0} 必须是 YYYY-MM-DD 格式。,{0} debe tener el formato YYYY-MM-DD.
+{0} 必须是 YYYY-MM-DD 格式的字符串。,{0} debe ser una cadena con el formato YYYY-MM-DD.
+{0} 必须是字符串。,{0} debe ser una cadena.
+{0} 必须是对象。,{0} debe ser un objeto.
+{0} 必须是有效的 YYYY-MM-DD 日期。,{0} debe ser una fecha válida YYYY-MM-DD.
+{0} 必须是非空字符串。,{0} debe ser una cadena que no esté vacía.
+交期,fecha de entrega
+仓库 {0} 不可用于{1},El almacén {0} no está disponible para {1}
+入库单 {0} 状态已成功回写 MES,El estado del pedido entrante {0} se ha vuelto a escribir correctamente en MES
+入库单已创建并提交。,La orden de recibo ha sido creada y enviada.
+公司 {0} 未启用 MES 集成。,La integración de la empresa {0} MES no está habilitada.
+只有 MES 来源的物料移动可以推送至 DLM,Sólo los movimientos de material de la fuente MES se pueden enviar a DLM
+只有成品/半成品入库单支持 MES 状态回写,Solo los documentos de recibo de producto terminado/producto semiacabado admiten la reescritura de estado MES
+只有物料发料、工单发料、注塑发料可以生成物料移动,"Sólo la emisión de material, la emisión de órdenes de trabajo y el moldeo por inyección pueden generar movimiento de material."
+已复用原入库单，未创建新单据。,El documento de recibo original se ha reutilizado y no se ha creado ningún documento nuevo.
+库存移动单 {0} 已成功推送到 DLM,La orden de movimiento de inventario {0} se envió correctamente a DLM
+库存转移单 {0} 的 MES 状态已重置为未推送,El estado MES de la orden de transferencia de inventario {0} se ha restablecido a No enviado
+当前用户没有创建物料移动的权限,El usuario actual no tiene permiso para crear movimientos de materiales.
+当前用户缺少 Bin 的读取权限,El usuario actual carece de permiso de lectura para Bin
+当前用户缺少 Item 的读取权限,El usuario actual carece de permiso de lectura para el artículo
+手动创建的物料需求不能推送至 DLM，请生成物料移动,Los requisitos de material creados manualmente no se pueden enviar a DLM; genere un movimiento de material
+手动物料移动无需重置 DLM 状态,No es necesario restablecer el estado del DLM para el movimiento manual de material
+数量,Cantidad
+无权访问该物料需求异步任务,No tengo permiso para acceder a la tarea asincrónica de requisitos de materiales.
+无需重置,No es necesario restablecer
+未找到 ERP 销售订单或 CRM 销售订单号 {0},No encontrado ERP Pedido de Venta o CRM Pedido de Venta número {0}
+未找到物料需求异步任务 {0},Tarea asincrónica de requisitos de material {0} no encontrada
+每批最多允许 {0} 张销售订单。,Se permite un máximo de hojas {0} y Pedido de Venta por lote.
+物料 {0} 缺少出库仓库；请传 warehouse、设置物料默认仓库，或配置公司 MES 默认出库仓。,"El material {0} carece de almacén de salida; pase el almacén, establezca el almacén predeterminado para el material o configure el almacén de salida predeterminado para la empresa MES."
+物料移动 {0} 草稿已生成。请确认后提交。,Se ha generado el borrador de movimiento de material {0}. Por favor confirme y envíe.
+物料需求 {0} 已发料完成。,Se ha emitido el requisito de material {0}.
+物料需求 {0} 必须已提交。,Se debe haber enviado el requisito de material {0}.
+物料需求 {0} 没有可发料的明细。,El requisito de material {0} no tiene detalles que puedan publicarse.
+物料需求已存在并返回原单据。,El requerimiento de material ya existe y se devuelve el documento original.
+物料需求已提交，出库单 {0} 已创建、提交并推送至 DLM。,"Se envió el requisito de material y se creó, envió y envió el pedido de salida {0} a DLM."
+物料需求已提交，出库单 {0} 已创建并提交，但推送至 DLM 失败，请手动推送。,"Se envió el requisito de material y se creó y envió el pedido de salida {0}, pero falló el envío a DLM. Empújelo manualmente."
+物料需求必须是草稿状态,Los requisitos de materiales deben estar en estado de borrador.
+物料需求明细,Detalles de los requisitos de materiales
+物料需求明细行号,Número de línea de detalle de requisito de material
+生成物料移动,Crear movimiento de inventario
+目标仓库,Almacén destino
+第 {0} 行物料 {1} 不存在,El material {1} en la fila {0} no existe
+第 {0} 行物料 {1} 缺少目标仓库；请传 t_warehouse、设置物料默认仓库，或配置公司 MES 默认入库仓。,"Falta el almacén de destino para el material {1} en la línea {0}; pase t_warehouse, configure el almacén predeterminado para el material o configure el almacén predeterminado de la empresa MES."
+第 {0} 行物料需求格式不正确,El formato de requisitos de material en la línea {0} es incorrecto.
+等待 MES 销售订单修改幂等锁超时。,Esperando a que MES Pedido de Venta modifique el tiempo de espera de bloqueo idempotente.
+缺少 Delivery Note MES 幂等字段，请先执行 bench migrate。,Falta el campo idempotente MES de la nota de entrega; primero realice la migración en banco.
+缺少 MES 状态回写接口配置：mes_status_callback_url,Falta la configuración de la interfaz de reescritura de estado de MES: mes_status_callback_url
+缺少 X-Idempotency-Key 请求头。,Falta el encabezado de solicitud X-Idempotency-Key.
+缺少 task_id 或 request_id,Falta task_id o request_id
+缺少有效的 item_codes 参数,Falta el parámetro item_codes válido
+缺少物料移动公司，无法查询物料默认仓库,Falta la empresa de transporte de materiales y no se puede consultar el almacén predeterminado de materiales.
+缺少销售出库幂等请求号，请传 request_id 或 production_batch_no。,"Si falta el número de solicitud idempotente Nota de Entrega, envíe request_id o production_batch_no."
+请求体包含不支持的字段：{0}。,El cuerpo de la solicitud contiene un campo no admitido: {0}.
+请求体必须是 JSON 对象。,El cuerpo de la solicitud debe ser un objeto JSON.
+请选择至少一个物料需求。,Seleccione al menos un requisito material.
+部分完成,Completado parcialmente
+销售出库幂等请求号长度不能超过 140 个字符。,La longitud del número de solicitud idempotente Nota de Entrega no puede exceder los 140 caracteres.
+MES 物料需求任务,Tareas de solicitud de materiales MES
+MES 集成日志,Registros de integración MES
+MES默认发料单位,Unidad predeterminada de salida MES
+MES物料申请发料窗口使用的默认单位。该单位必须存在于物料的单位换算明细中，或与库存单位一致。,Unidad predeterminada del diálogo de salida de materiales MES. Debe figurar en los detalles de conversión de unidades del artículo o coincidir con su unidad de inventario.
