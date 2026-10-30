@@ -38,7 +38,7 @@ except ModuleNotFoundError as exc:
 else:
     CRM_INTEGRATION_AVAILABLE = True
 from mes_integration.mes_integration.integration_log import create_mes_log, update_mes_log
-from mes_integration.mes_integration.settings import is_mes_integration_enabled, throw_mes_integration_disabled
+from mes_integration.mes_integration.settings import is_mes_integration_enabled, requires_sales_order_mes_sync, throw_mes_integration_disabled
 from mes_integration.mes_integration.stock_entry import (
     MES_DELIVERY_WAREHOUSE_FIELD,
     get_mes_company_warehouse,
@@ -741,6 +741,9 @@ def push_delivery_note_status_to_mes(delivery_note_name):
 
 
 def push_delivery_note_sales_order_status_to_mes(delivery_note, sales_order_name):
+    sales_order = frappe.get_doc("Sales Order", sales_order_name)
+    if not requires_sales_order_mes_sync(sales_order):
+        return {"status": "skipped", "reason": "NO_MES_PRODUCTION", "sales_order": sales_order_name}
     payload = build_delivery_note_status_payload(delivery_note, sales_order_name)
     mes_log = create_mes_log(
         direction="Outbound",

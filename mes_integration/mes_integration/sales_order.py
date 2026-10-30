@@ -7,6 +7,7 @@ from frappe.utils import now
 from mes_integration.mes_integration.integration_log import create_mes_log, update_mes_log
 from mes_integration.mes_integration.settings import (
     is_mes_integration_enabled,
+    requires_sales_order_mes_sync,
     throw_mes_integration_disabled,
 )
 from mes_integration.mes_integration.stock_entry import (
@@ -98,6 +99,8 @@ def push_sales_order_status_to_mes(
 def push_sales_order_status_doc_to_mes(
     sales_order, triggered_status=None, trigger_event=None
 ):
+    if not requires_sales_order_mes_sync(sales_order):
+        return {"status": "skipped", "reason": "NO_MES_PRODUCTION", "sales_order": sales_order.name}
     payload = build_sales_order_status_payload(
         sales_order, triggered_status=triggered_status, trigger_event=trigger_event
     )
