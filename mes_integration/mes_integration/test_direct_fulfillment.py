@@ -1,4 +1,4 @@
-"""Direct NSF fulfillment must not create MES status logs or outbound requests."""
+"""Trade orders must not create MES status logs or outbound requests."""
 
 import builtins
 from unittest.mock import patch
@@ -10,9 +10,11 @@ from mes_integration.mes_integration import delivery_note, sales_order, settings
 
 
 def order(code="NSF4030112104", **values):
-	return frappe._dict(name="TEST-NSF-SO", company="MX", docstatus=1, custom_crm_order_no="TEST-CRM",
-		custom_process_status="Pending Deposit Confirmation",
-		items=[frappe._dict(item_code=code, qty=10)], **values)
+	source = "EXTERNAL_PURCHASE" if code.startswith("NSF") else "SELF_DEVELOPED"
+	return frappe._dict({"name": "TEST-NSF-SO", "company": "MX", "docstatus": 1,
+		"custom_crm_order_no": "TEST-CRM", "custom_process_status": "Pending Deposit Confirmation",
+		"custom_product_source": source,
+		"items": [frappe._dict(item_code=code, qty=10, custom_product_source=source)], **values})
 
 
 class TestDirectFulfillmentMESCallbacks(UnitTestCase):
@@ -26,7 +28,8 @@ class TestDirectFulfillmentMESCallbacks(UnitTestCase):
 		native = order(); native.custom_crm_order_no = None
 		self.assertTrue(settings.requires_sales_order_mes_sync(native))
 		mixed = order(); mixed["items"].append(frappe._dict(item_code="NBD4030000101", qty=10))
-		self.assertTrue(settings.requires_sales_order_mes_sync(mixed))
+		with self.assertRaises(frappe.ValidationError):
+			settings.requires_sales_order_mes_sync(mixed)
 
 	def test_missing_crm_policy_keeps_mes_optional_dependency_compatible(self):
 		original = builtins.__import__

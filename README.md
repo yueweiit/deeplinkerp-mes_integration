@@ -85,9 +85,9 @@ MES 创建物料需求后，响应会同时放在 Frappe 标准的 `message` 和
 
 ### 直接履约产品的回调例外
 
-具有 CRM 订单号、按公司产品名单完成直接履约财务放行的订单，不向 MES 下发销售订单，也不回调尾款和 Delivery Note 提交/取消状态。管理员在公司资料的“无需 MES 生产的产品编码前缀”维护三位产品编码（默认 NSF 钢化膜），同产品多型号/颜色随整单处理。`settings.requires_sales_order_mes_sync` 复用 CRM `production_routing.py`，优先读取销售订单的持久 `custom_crm_fulfillment_route`，成功财务审计及 MES 成功记录仅兼容未补存的旧单；旧待生产状态保持 MES，已完成/取消但路径不明的订单为 UNKNOWN，阻止 HTTP 并要求核对，不按现行名单重新分类历史订单。名单调整和日志清理不会改变已保存的路径。
+CRM 来源订单只有订单头及明细明确为 `EXTERNAL_PURCHASE`（贸易款）才走直接履约；`SELF_DEVELOPED`（自研款）或空来源仍需 MES。`settings.requires_sales_order_mes_sync` 复用 CRM `production_routing.py`，优先读取销售订单持久的 `custom_crm_fulfillment_route`；成功审计和 MES 成功记录兼容旧单。旧待生产状态保持 MES，已完成/取消但路径不明的订单为 UNKNOWN，阻止 HTTP 并要求核对。旧公司产品编码前缀配置不再决定未放行订单路径；历史已记录的直接履约路径保持不变。
 
-发送前返回 `status=skipped, reason=NO_MES_PRODUCTION`，不创建 MES 投递日志或调用外部 HTTP。出库单关联多个销售订单时仅跳过直接履约订单，其他订单仍分别发送。人工补推与已排队任务执行相同检查。原生非 CRM 订单、未配置产品和空明细沿用原行为；异常混单由 CRM 财务放行前拦截。CRM App 未安装或未提供该策略模块时保持原逻辑，不把内部依赖损坏静默当作跳过。需要同时更新 CRM 与 MES 两个 App，并按 CRM 的安装/迁移流程同步 Company 配置字段、Sales Order 路径字段及历史证据快照。回归入口为 `test_direct_fulfillment.py` 及原有销售订单、出库回调测试。
+发送前返回 `status=skipped, reason=NO_MES_PRODUCTION`，不创建 MES 投递日志或调用外部 HTTP。出库单关联多个销售订单时仅跳过直接履约订单，其他订单仍分别发送。人工补推与已排队任务执行相同检查。原生非 CRM 订单沿用原行为；来源矛盾的订单由 CRM 接单和财务放行拦截。CRM App 未安装或未提供该策略模块时保持原逻辑，不把内部依赖损坏静默当作跳过。需要配套更新 CRM 与 MES 两个 App，并通过 CRM 安装/迁移同步产品来源字段。回归入口为 `test_direct_fulfillment.py` 及原有销售订单、出库回调测试。
 
 ### MES 销售订单 ODT/交期回传
 
