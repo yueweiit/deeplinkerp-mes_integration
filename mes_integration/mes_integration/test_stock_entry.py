@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import frappe
 from frappe.tests import UnitTestCase
@@ -14,6 +14,7 @@ from mes_integration.mes_integration.stock_entry import (
 	get_sales_order_by_reference,
 	is_mes_receipt_stock_entry,
 	notify_mes_stock_entry_status,
+	push_to_mes,
 	set_mes_stock_entry_default_target_warehouses,
 	set_mes_stock_entry_sales_order,
 	validate_issue_confirm_response,
@@ -23,6 +24,34 @@ from mes_integration.mes_integration.stock_entry import (
 
 
 class TestMESStockEntry(UnitTestCase):
+	def test_push_checks_write_permission_before_external_request(self):
+		stock_entry = MagicMock()
+		stock_entry.name = "MAT-STE-TEST"
+		stock_entry.docstatus = 1
+		stock_entry.get.side_effect = lambda field: {
+			"company": "Test Company",
+			"custom_mes_status": "Unpushed",
+		}.get(field)
+		def check_permission(kind):
+			if kind == "write":
+				raise frappe.PermissionError("No write access")
+
+		stock_entry.check_permission.side_effect = check_permission
+		with (
+			patch("mes_integration.mes_integration.stock_entry.frappe.get_doc", return_value=stock_entry),
+			patch("mes_integration.mes_integration.stock_entry.is_mes_integration_enabled", return_value=True),
+			patch("mes_integration.mes_integration.stock_entry.is_dlm_issue_stock_entry", return_value=True),
+			patch("mes_integration.mes_integration.stock_entry.is_mes_source_stock_entry", return_value=True),
+			patch("mes_integration.mes_integration.stock_entry.build_issue_confirm_payload") as build_payload,
+			patch("mes_integration.mes_integration.stock_entry.create_mes_log") as create_log,
+			patch("mes_integration.mes_integration.stock_entry.post_issue_confirm") as post_issue,
+			self.assertRaises(frappe.PermissionError),
+		):
+			push_to_mes(stock_entry.name)
+		build_payload.assert_not_called()
+		create_log.assert_not_called()
+		post_issue.assert_not_called()
+
 	def test_receipt_warehouse_uses_company_config_not_stock_balance(self):
 		stock_entry_data = {
 			"company": "Test Company",

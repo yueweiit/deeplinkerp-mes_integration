@@ -57,6 +57,8 @@ def push_to_mes(stock_entry_name):
         frappe.db.commit()
         frappe.throw(message)
 
+    # Confirm local write access before the irreversible DLM request.
+    stock_entry.check_permission("write")
     payload = build_issue_confirm_payload(stock_entry)
     request_url = get_dlm_material_issue_callback_url()
     mes_log = create_mes_log(
