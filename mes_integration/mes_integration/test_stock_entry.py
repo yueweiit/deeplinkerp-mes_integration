@@ -5,10 +5,12 @@ from frappe.tests import UnitTestCase
 
 from mes_integration.mes_integration.integration_log import log_inbound_stock_entry
 from mes_integration.mes_integration.stock_entry import (
-	build_stock_entry_status_payload,
+	build_issue_confirm_payload,
 	build_mes_stock_entry_response,
+	build_stock_entry_status_payload,
 	create_and_submit_stock_entry_from_mes,
 	enqueue_mes_stock_entry_status_callback,
+	get_dlm_processed_count,
 	get_existing_mes_receipt_stock_entry,
 	get_mes_receipt_item_identity,
 	get_sales_order_by_reference,
@@ -24,6 +26,109 @@ from mes_integration.mes_integration.stock_entry import (
 
 
 class TestMESStockEntry(UnitTestCase):
+	def make_issue_entry(self, name, warehouse, quantity):
+		return frappe._dict(
+			name=name,
+			posting_date="2026-11-09",
+			posting_time="08:09:10",
+			purpose="Material Issue",
+			items=[
+				frappe._dict(
+					name=f"{name}-row-1",
+					idx=1,
+					material_request="MAT-MR-MES-TEST",
+					material_request_item="MR-ITEM-1",
+					item_code="ITEM-1",
+					s_warehouse=warehouse,
+					qty=quantity,
+					transfer_qty=quantity,
+					stock_uom="kg",
+				)
+			],
+		)
+
+	def test_issue_confirm_v2_preserves_each_issue_warehouse_for_same_request_row(self):
+		with (
+			patch("mes_integration.mes_integration.stock_entry.validate_stock_entry_for_issue_confirm"),
+			patch("mes_integration.mes_integration.stock_entry.get_issue_confirm_payload_version", return_value=2),
+		):
+			first = build_issue_confirm_payload(self.make_issue_entry("STE-1", "Warehouse A", 6))
+			second = build_issue_confirm_payload(self.make_issue_entry("STE-2", "Warehouse B", 4))
+
+		self.assertEqual(first["items"], [{"item_code": "ITEM-1", "total_issued_qty": 6}])
+		self.assertEqual(second["items"], [{"item_code": "ITEM-1", "total_issued_qty": 4}])
+		self.assertEqual(first["payload_version"], second["payload_version"])
+		self.assertEqual(first["payload_version"], 2)
+		self.assertEqual(first["posting_time"], "08:09:10")
+		self.assertEqual(
+			[(payload["stock_entry"], payload["issue_lines"][0]["material_request_item"],
+				payload["issue_lines"][0]["s_warehouse"], payload["issue_lines"][0]["issued_qty"])
+				for payload in (first, second)],
+			[("STE-1", "MR-ITEM-1", "Warehouse A", 6), ("STE-2", "MR-ITEM-1", "Warehouse B", 4)],
+		)
+		self.assertEqual(first["issue_lines"][0]["stock_entry_detail"], "STE-1-row-1")
+		self.assertEqual(second["issue_lines"][0]["stock_entry_detail"], "STE-2-row-1")
+		self.assertEqual(first["issue_lines"][0]["stock_uom"], "kg")
+
+	def test_issue_confirm_v1_keeps_existing_payload(self):
+		with (
+			patch("mes_integration.mes_integration.stock_entry.validate_stock_entry_for_issue_confirm"),
+			patch("mes_integration.mes_integration.stock_entry.get_issue_confirm_payload_version", return_value=1),
+		):
+			payload = build_issue_confirm_payload(self.make_issue_entry("STE-1", "Warehouse A", 6))
+
+		self.assertEqual(
+			payload,
+			{
+				"material_request": "MAT-MR-MES-TEST",
+				"stock_entry": "STE-1",
+				"posting_date": "2026-11-09",
+				"items": [{"item_code": "ITEM-1", "total_issued_qty": 6}],
+			},
+		)
+
+	def test_issue_confirm_v2_rejects_unlinked_detail(self):
+		entry = self.make_issue_entry("STE-1", "Warehouse A", 6)
+		entry["items"][0].material_request_item = None
+		with (
+			patch("mes_integration.mes_integration.stock_entry.validate_stock_entry_for_issue_confirm"),
+			patch("mes_integration.mes_integration.stock_entry.get_issue_confirm_payload_version", return_value=2),
+			self.assertRaises(frappe.ValidationError),
+		):
+			build_issue_confirm_payload(entry)
+
+	def test_issue_confirm_v2_requires_posting_time(self):
+		entry = self.make_issue_entry("STE-1", "Warehouse A", 6)
+		entry.posting_time = None
+		with (
+			patch("mes_integration.mes_integration.stock_entry.validate_stock_entry_for_issue_confirm"),
+			patch("mes_integration.mes_integration.stock_entry.get_issue_confirm_payload_version", return_value=2),
+			self.assertRaises(frappe.ValidationError),
+		):
+			build_issue_confirm_payload(entry)
+
+	def test_issue_confirm_v2_keeps_warehouse_when_item_code_is_repeated(self):
+		entry = self.make_issue_entry("STE-1", "Warehouse A", 6)
+		second_row = frappe._dict(entry["items"][0].copy())
+		second_row.name = "STE-1-row-2"
+		second_row.idx = 2
+		second_row.material_request_item = "MR-ITEM-2"
+		second_row.s_warehouse = "Warehouse B"
+		second_row.qty = second_row.transfer_qty = 4
+		entry["items"].append(second_row)
+		with (
+			patch("mes_integration.mes_integration.stock_entry.validate_stock_entry_for_issue_confirm"),
+			patch("mes_integration.mes_integration.stock_entry.get_issue_confirm_payload_version", return_value=2),
+		):
+			payload = build_issue_confirm_payload(entry)
+
+		self.assertEqual(payload["items"], [{"item_code": "ITEM-1", "total_issued_qty": 10}])
+		self.assertEqual(
+			[(line["material_request_item"], line["s_warehouse"], line["issued_qty"])
+				for line in payload["issue_lines"]],
+			[("MR-ITEM-1", "Warehouse A", 6), ("MR-ITEM-2", "Warehouse B", 4)],
+		)
+
 	def test_push_checks_write_permission_before_external_request(self):
 		stock_entry = MagicMock()
 		stock_entry.name = "MAT-STE-TEST"
@@ -146,6 +251,44 @@ class TestMESStockEntry(UnitTestCase):
 			{"success": True, "data": {"status": "processed"}},
 			{"stock_entry": "MAT-STE-2026-00001"},
 		)
+
+	def test_dlm_issue_confirm_v2_requires_explicit_line_acknowledgement(self):
+		payload = {
+			"payload_version": 2,
+			"stock_entry": "STE-1",
+			"issue_lines": [{"stock_entry_detail": "STE-1-row-1"}],
+		}
+		response = {
+			"success": True,
+			"data": {
+				"status": "processed",
+				"payload_version": 2,
+				"stock_entry": "STE-1",
+				"issue_lines_processed": 1,
+			},
+		}
+		validate_issue_confirm_response(response, payload)
+		self.assertEqual(get_dlm_processed_count(response), 1)
+		validate_issue_confirm_response(
+			{**response, "data": {**response["data"], "status": "partial"}}, payload
+		)
+		validate_issue_confirm_response(
+			{**response, "data": {**response["data"], "status": "already_issued"}}, payload
+		)
+		with (
+			patch("mes_integration.mes_integration.stock_entry.log_mes_push_error"),
+			self.assertRaises(frappe.ValidationError),
+		):
+			validate_issue_confirm_response(
+				{"success": True, "data": {"status": "already_issued"}}, payload
+			)
+		with (
+			patch("mes_integration.mes_integration.stock_entry.log_mes_push_error"),
+			self.assertRaises(frappe.ValidationError),
+		):
+			validate_issue_confirm_response(
+				{**response, "data": {**response["data"], "issue_lines_processed": 0}}, payload
+			)
 
 	def test_dlm_issue_confirm_rejects_partial_status(self):
 		with (

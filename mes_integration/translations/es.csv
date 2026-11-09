@@ -358,3 +358,8 @@ MES 物料需求任务,Tareas de solicitud de materiales MES
 MES 集成日志,Registros de integración MES
 MES默认发料单位,Unidad predeterminada de salida MES
 MES物料申请发料窗口使用的默认单位。该单位必须存在于物料的单位换算明细中，或与库存单位一致。,Unidad predeterminada del diálogo de salida de materiales MES. Debe figurar en los detalles de conversión de unidades del artículo o coincidir con su unidad de inventario.
+"DLM 发料回传版本配置无效：{0}","Versión de carga útil no válida para la confirmación de salida a DLM: {0}"
+"第 {0} 行缺少逐行发料字段：{1}","A la línea de salida {0} le faltan campos: {1}"
+"第 {0} 行关联的物料需求与库存单据不一致","La solicitud de materiales de la línea de salida {0} no coincide con la entrada de stock"
+"DLM 发料回调未确认逐行仓库明细","DLM no confirmó el almacén de cada línea de salida"
+"逐行发料回传缺少库存单据的过账日期或时间","La confirmación de salida no incluye la fecha o la hora de contabilización del movimiento de existencias"

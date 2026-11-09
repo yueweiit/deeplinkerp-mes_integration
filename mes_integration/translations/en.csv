@@ -240,3 +240,8 @@ MES 集成日志,MES Integration Logs
 物料具体明细,Material Details
 MES默认发料单位,MES Default Issue Unit
 MES物料申请发料窗口使用的默认单位。该单位必须存在于物料的单位换算明细中，或与库存单位一致。,Default unit used in the MES material request issue dialog. This unit must be present in the item's unit conversion details or match the stock unit.
+"DLM 发料回传版本配置无效：{0}","Invalid DLM issue callback payload version: {0}"
+"第 {0} 行缺少逐行发料字段：{1}","Issue line {0} is missing fields: {1}"
+"第 {0} 行关联的物料需求与库存单据不一致","Material Request linked to issue line {0} does not match the Stock Entry"
+"DLM 发料回调未确认逐行仓库明细","DLM did not confirm warehouse details for each issue line"
+"逐行发料回传缺少库存单据的过账日期或时间","The issue callback is missing the Stock Entry posting date or time"

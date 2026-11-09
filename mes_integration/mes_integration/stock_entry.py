@@ -110,6 +110,7 @@ def push_to_mes(stock_entry_name):
 def build_issue_confirm_payload(stock_entry):
     validate_stock_entry_for_issue_confirm(stock_entry)
 
+    payload_version = get_issue_confirm_payload_version()
     posting_date = getdate(stock_entry.posting_date).isoformat() if stock_entry.posting_date else None
     material_request = get_issue_material_request(stock_entry)
     items_by_code = {}
@@ -141,12 +142,74 @@ def build_issue_confirm_payload(stock_entry):
     if not items:
         frappe.throw(frappe._("没有可推送到 DLM 的发料明细"))
 
-    return {
+    payload = {
         "material_request": material_request,
         "stock_entry": stock_entry.name,
         "posting_date": posting_date,
         "items": items,
     }
+    if payload_version == 2:
+        if not posting_date or not stock_entry.get("posting_time"):
+            frappe.throw(_("逐行发料回传缺少库存单据的过账日期或时间"))
+        payload["payload_version"] = 2
+        payload["posting_time"] = str(get_time(stock_entry.get("posting_time")))
+        payload["issue_lines"] = build_issue_confirm_lines(stock_entry, material_request)
+
+    return payload
+
+
+def get_issue_confirm_payload_version():
+    configured = frappe.conf.get("dlm_material_issue_payload_version")
+    version = str(configured) if configured not in (None, "") else "1"
+    if version not in ("1", "2"):
+        frappe.throw(_("DLM 发料回传版本配置无效：{0}").format(version))
+    return int(version)
+
+
+def build_issue_confirm_lines(stock_entry, material_request):
+    lines = []
+    missing_fields = []
+    for row in stock_entry.get("items", []):
+        if flt(row.get("transfer_qty") or row.get("qty")) <= 0:
+            continue
+
+        required = {
+            "stock_entry_detail": row.get("name"),
+            "material_request_item": row.get("material_request_item"),
+            "item_code": row.get("item_code"),
+            "s_warehouse": row.get("s_warehouse"),
+            "stock_uom": row.get("stock_uom"),
+            "transfer_qty": row.get("transfer_qty"),
+        }
+        if stock_entry.get("purpose") != "Material Issue":
+            required["t_warehouse"] = row.get("t_warehouse")
+        absent = [field for field, value in required.items() if not value]
+        if absent:
+            missing_fields.append(
+                _("第 {0} 行缺少逐行发料字段：{1}").format(row.idx, ", ".join(absent))
+            )
+            continue
+        if row.get("material_request") != material_request:
+            missing_fields.append(
+                _("第 {0} 行关联的物料需求与库存单据不一致").format(row.idx)
+            )
+            continue
+
+        lines.append(
+            {
+                "stock_entry_detail": row.get("name"),
+                "material_request_item": row.get("material_request_item"),
+                "item_code": row.get("item_code"),
+                "s_warehouse": row.get("s_warehouse"),
+                "t_warehouse": row.get("t_warehouse") or None,
+                "issued_qty": flt(row.get("transfer_qty")),
+                "stock_uom": row.get("stock_uom"),
+            }
+        )
+
+    if missing_fields:
+        frappe.throw("<br>".join(missing_fields), title=_("DLM 发料回调字段不完整"))
+    return lines
 
 
 def get_issue_material_request(stock_entry):
@@ -222,7 +285,11 @@ def validate_issue_confirm_response(response, payload):
 
     data = response.get("data") or {}
     status = data.get("status")
+    # A partial request can still have a fully processed Stock Entry event.
+    # V2 confirms the event separately with stock_entry and line count below.
     valid_statuses = {"processed", "already_issued"}
+    if payload.get("payload_version") == 2:
+        valid_statuses.add("partial")
 
     if status not in valid_statuses:
         log_mes_push_error("DLM 发料回调业务状态异常", payload, response)
@@ -230,6 +297,17 @@ def validate_issue_confirm_response(response, payload):
             get_mes_error_message(response)
             or frappe._("DLM 发料回调业务状态异常：{0}").format(status or "missing")
         )
+
+    if payload.get("payload_version") == 2:
+        line_count = data.get("issue_lines_processed")
+        if (
+            str(data.get("payload_version")) != "2"
+            or data.get("stock_entry") != payload.get("stock_entry")
+            or type(line_count) is not int
+            or line_count != len(payload["issue_lines"])
+        ):
+            log_mes_push_error("DLM 发料回调未确认逐行仓库明细", payload, response)
+            frappe.throw(_("DLM 发料回调未确认逐行仓库明细"))
 
 
 def is_successful_dlm_response(response):
@@ -241,6 +319,8 @@ def is_successful_dlm_response(response):
 
 def get_dlm_processed_count(response):
     data = response.get("data") or {}
+    if "issue_lines_processed" in data:
+        return data.get("issue_lines_processed")
     if "lines_updated" in data:
         return data.get("lines_updated")
 
