@@ -14,6 +14,7 @@ from mes_integration.mes_integration.stock_entry import (
 	enqueue_mes_stock_entry_status_callback,
 	get_dlm_processed_count,
 	get_existing_mes_receipt_stock_entry,
+	get_mes_receipt_callback_statuses,
 	get_mes_receipt_item_identity,
 	get_mes_receipt_identity_mismatches,
 	get_mes_receipt_request_hash,
@@ -543,6 +544,40 @@ class TestMESStockEntry(UnitTestCase):
 		):
 			with self.subTest(fieldname=fieldname, value=value), self.assertRaises(frappe.ValidationError):
 				validate_reviewed_mes_receipt_identity(edited(**{fieldname: value}))
+
+	def test_receipt_callback_status_matches_current_document_event(self):
+		logs = [
+			frappe._dict(name="LOG-3", reference_name="CANCELLED", status="Success", request_payload='{"docstatus": 1}'),
+			frappe._dict(name="LOG-2", reference_name="CANCELLED", status="Failed", request_payload='{"docstatus": 2}'),
+			frappe._dict(name="LOG-1", reference_name="SUBMITTED", status="Success", request_payload='{"docstatus": 1}'),
+		]
+		readable = [frappe._dict(name="CANCELLED", docstatus=2), frappe._dict(name="SUBMITTED", docstatus=1), frappe._dict(name="NO-CANCEL-LOG", docstatus=2)]
+		with (
+			patch("mes_integration.mes_integration.stock_entry.frappe.db.has_column", return_value=True),
+			patch("mes_integration.mes_integration.stock_entry.frappe.get_list", return_value=readable),
+			patch("mes_integration.mes_integration.stock_entry.frappe.get_all", return_value=logs),
+		):
+			result = get_mes_receipt_callback_statuses(["CANCELLED", "SUBMITTED", "NO-CANCEL-LOG"])
+		self.assertEqual(result, {"CANCELLED": "Failed", "SUBMITTED": "Success", "NO-CANCEL-LOG": "No Record"})
+
+	def test_receipt_callback_status_keeps_latest_match_across_log_pages(self):
+		readable = [frappe._dict(name=name, docstatus=1) for name in ("FIRST", "SECOND")]
+		newest = frappe._dict(name="LATEST", reference_name="FIRST", status="Success", request_payload='{"docstatus": 1}')
+		older = frappe._dict(name="OLDER", reference_name="FIRST", status="Failed", request_payload='{"docstatus": 1}')
+		unmatched = frappe._dict(name="UNMATCHED", reference_name="FIRST", status="Pending", request_payload='{"docstatus": 0}')
+		second = frappe._dict(name="SECOND-LOG", reference_name="SECOND", status="Success", request_payload='{"docstatus": 1}')
+		with (
+			patch("mes_integration.mes_integration.stock_entry.frappe.db.has_column", return_value=True),
+			patch("mes_integration.mes_integration.stock_entry.frappe.get_list", return_value=readable),
+			patch("mes_integration.mes_integration.stock_entry.frappe.get_all", side_effect=[
+				[newest, older, *([unmatched] * 198)], [older, second],
+			]) as get_logs,
+		):
+			self.assertEqual(get_mes_receipt_callback_statuses(["FIRST", "SECOND"]), {
+				"FIRST": "Success", "SECOND": "Success",
+			})
+		self.assertEqual(get_logs.call_count, 2)
+		self.assertEqual(get_logs.call_args.kwargs["limit_start"], 200)
 
 	def test_review_marker_cannot_be_added_outside_mes_receipt_api(self):
 		ordinary = frappe._dict(custom_mes_receipt_request_hash=None)

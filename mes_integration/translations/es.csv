@@ -367,6 +367,40 @@ MES物料申请发料窗口使用的默认单位。该单位必须存在于物�
 "MES 入库待审核字段尚未安装，请先完成站点迁移","El campo de revisión de recepción de MES no está instalado; migre el sitio primero"
 "MES 未完整确认实际入库明细，请核对原库存单据后补推","MES no confirmó todas las líneas de recepción reales; verifique el movimiento de existencias original antes de reintentar"
 "MES入库原请求指纹","Huella de la solicitud original de recepción de MES"
+物料移动视图,Vistas de movimientos de existencias
+待核对入库,Recepciones pendientes de revisión
+已入库,Recibidas
+全部,Todos
+ERP入库单号,N.º de movimiento ERP
+移动类型,Tipo de movimiento
+状态,Estado
+MES入库编号,N.º de recepción MES
+销售订单,Pedido de venta
+过账日期,Fecha de contabilización
+公司,Empresa
+ERP / MES入库编号,N.º de recepción ERP / MES
+入库日期起,Fecha de recepción desde
+入库日期止,Fecha de recepción hasta
+拖动或按方向键调整列宽,Arrastre o use las flechas para cambiar el ancho de la columna
+展开 / 收起入库明细,Expandir / contraer detalles de recepción
+入库明细读取失败，请重试。,No se pudieron cargar los detalles de recepción. Inténtelo de nuevo.
+正在读取入库明细…,Cargando detalles de recepción…
+暂无可读入库明细,No hay detalles de recepción disponibles
+入库明细,Detalles de recepción
+库存数量,Cantidad en existencias
+入库仓库,Almacén de destino
+发出仓库,Almacén de origen
+"MES发料回传","Confirmación de salida MES"
+"MES入库回传","Confirmación de recepción MES"
+"待提交","Pendiente de envío en ERP"
+"回传待确认","Esperando resultado de la confirmación"
+"已回传","Confirmado por MES"
+"回传失败","Error al confirmar"
+"无回传记录","Sin registro de confirmación"
+"加载中","Cargando"
+"加载失败","Error de carga"
+"请提供 1 至 100 个物料移动单号","Indique entre 1 y 100 números de movimiento de existencias"
 "只能通过 MES 入库接口创建带审核标识的物料移动","Solo la API de recepción MES puede crear un movimiento de existencias marcado para revisión"
 "MES 入库审核单的来源信息不可修改；请只核对明细、数量和仓库","No se puede cambiar la información de origen de una recepción MES en revisión; revise únicamente sus líneas, cantidades y almacenes"
 "MES 入库审核单的物料明细不可增删或替换；请只修改数量和目标仓库","No se pueden añadir, eliminar ni sustituir líneas de una recepción MES en revisión; cambie solo la cantidad y el almacén de destino"
+"物料移动导出参数无效","Parámetros de exportación de movimientos de existencias no válidos"

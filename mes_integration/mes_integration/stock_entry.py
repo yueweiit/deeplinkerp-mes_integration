@@ -1410,6 +1410,65 @@ MES_RECEIPT_STATUS_QUEUE = "short"
 MES_RECEIPT_STATUS_TIMEOUT = 300
 
 
+@frappe.whitelist(methods=["POST"])
+def get_mes_receipt_callback_statuses(stock_entry_names):
+    """Return the latest callback for each readable receipt's current docstatus."""
+    if isinstance(stock_entry_names, str):
+        try:
+            stock_entry_names = frappe.parse_json(stock_entry_names)
+        except (TypeError, ValueError):
+            frappe.throw(_("请提供 1 至 100 个物料移动单号"))
+    if (
+        not isinstance(stock_entry_names, list)
+        or not stock_entry_names
+        or len(stock_entry_names) > 100
+        or any(not isinstance(name, str) or not name.strip() or len(name) > 140 for name in stock_entry_names)
+    ):
+        frappe.throw(_("请提供 1 至 100 个物料移动单号"))
+
+    if not frappe.db.has_column("Stock Entry", "custom_mes_receipt"):
+        return {}
+    names = list(dict.fromkeys(stock_entry_names))
+    readable = frappe.get_list(
+        "Stock Entry",
+        filters={"name": ["in", names], "custom_mes_receipt": 1},
+        fields=["name", "docstatus"],
+        limit_page_length=len(names),
+    )
+    readable_names = [row.name for row in readable]
+    if not readable_names:
+        return {}
+
+    result = {name: "No Record" for name in readable_names}
+    current_status = {row.name: cint(row.docstatus) for row in readable}
+    remaining = set(readable_names)
+    offset = 0
+    while remaining:
+        rows = frappe.get_all(
+            "MES Integration Log",
+            filters={"reference_doctype": "Stock Entry", "reference_name": ["in", readable_names],
+                     "direction": "Outbound", "event": MES_RECEIPT_STATUS_EVENT},
+            fields=["name", "reference_name", "status", "request_payload"],
+            order_by="creation desc, name desc", limit_start=offset, limit_page_length=200,
+        )
+        if not rows:
+            break
+        for row in rows:
+            if row.reference_name not in remaining:
+                continue
+            try:
+                payload = frappe.parse_json(row.request_payload or "{}")
+            except (TypeError, ValueError):
+                continue
+            if isinstance(payload, dict) and cint(payload.get("docstatus", -1)) == current_status[row.reference_name]:
+                result[row.reference_name] = row.status
+                remaining.discard(row.reference_name)
+        if len(rows) < 200:
+            break
+        offset += len(rows)
+    return result
+
+
 def notify_mes_stock_entry_status(stock_entry, method=None):
     """
     Stock Entry on_submit / on_cancel hook handler.

@@ -249,6 +249,42 @@ MES物料申请发料窗口使用的默认单位。该单位必须存在于物�
 "MES 入库待审核字段尚未安装，请先完成站点迁移","The MES receipt review field is not installed; migrate the site first"
 "MES 未完整确认实际入库明细，请核对原库存单据后补推","MES did not confirm all actual receipt lines; check the original Stock Entry before retrying"
 "MES入库原请求指纹","Original MES receipt request fingerprint"
+物料移动视图,Stock Entry views
+待核对入库,Pending receipt review
+已入库,Received
+全部,All
+ERP入库单号,ERP Stock Entry No.
+移动类型,Stock Entry Type
+状态,Status
+MES入库编号,MES Receipt No.
+销售订单,Sales Order
+过账日期,Posting Date
+公司,Company
+ERP / MES入库编号,ERP / MES Receipt No.
+入库日期起,Receipt date from
+入库日期止,Receipt date to
+拖动或按方向键调整列宽,Drag or use arrow keys to resize column
+展开 / 收起入库明细,Expand / collapse receipt details
+入库明细读取失败，请重试。,Could not load receipt details. Please retry.
+正在读取入库明细…,Loading receipt details…
+暂无可读入库明细,No readable receipt details
+入库明细,Receipt details
+库存数量,Stock Quantity
+库存单位,Stock UOM
+入库仓库,Receipt Warehouse
+发出仓库,Source Warehouse
+"MES发料回传","MES issue callback"
+"MES入库回传","MES receipt callback"
+"待提交","Awaiting submission"
+"回传待确认","Awaiting callback result"
+"已回传","Confirmed by MES"
+"回传失败","Callback failed"
+"无回传记录","No callback record"
+"加载中","Loading"
+"加载失败","Could not load"
+"请提供 1 至 100 个物料移动单号","Provide 1 to 100 Stock Entry numbers"
 "只能通过 MES 入库接口创建带审核标识的物料移动","Only the MES receipt API can create a Stock Entry marked for review"
 "MES 入库审核单的来源信息不可修改；请只核对明细、数量和仓库","The source information of a MES receipt under review cannot be changed; review its lines, quantities, and warehouses only"
 "MES 入库审核单的物料明细不可增删或替换；请只修改数量和目标仓库","MES receipt lines cannot be added, removed or replaced; change only the quantity and target warehouse"
+"物料移动导出参数无效","Invalid Stock Entry export parameters"
+"Injection Molding Issuance","Injection Molding Issuance"

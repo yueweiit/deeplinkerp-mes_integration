@@ -26,6 +26,7 @@ required_apps = ["erpnext"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/mes_integration/css/mes_integration.css"
+app_include_css = "/assets/mes_integration/css/stock_entry_list.css?v=2"
 # app_include_js = "/assets/mes_integration/js/mes_integration.js"
 app_include_js = "/assets/mes_integration/js/system_log_sidebar.js"
 
