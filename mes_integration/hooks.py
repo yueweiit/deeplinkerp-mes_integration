@@ -178,6 +178,7 @@ doc_events = {
 		"after_insert": "mes_integration.mes_integration.integration_log.log_inbound_material_request",
 	},
 	"Stock Entry": {
+		"validate": "mes_integration.mes_integration.stock_entry.validate_reviewed_mes_receipt_identity",
 		"on_submit": [
 			"mes_integration.mes_integration.integration_log.log_inbound_stock_entry",
 			"mes_integration.mes_integration.stock_entry.update_material_request_transferred_qty",

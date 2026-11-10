@@ -17,7 +17,9 @@ def sync_custom_fields():
 	from mes_integration.patches.v1_0.add_material_request_item_details import execute as add_request_details
 	from mes_integration.patches.v1_0.add_material_request_item_transferred_qty import execute as add_transferred_qty
 	from mes_integration.patches.v1_0.add_mes_custom_fields import execute as add_mes_fields
+	from mes_integration.patches.v1_0.add_mes_receipt_request_hash import execute as add_receipt_request_hash
 	from mes_integration.patches.v1_0.add_material_request_issue_category import execute as add_issue_category
+	from mes_integration.patches.v1_0.update_mes_receipt_number_client_script import execute as update_receipt_client_script
 
 	add_request_details()
 	add_transferred_qty()
@@ -25,7 +27,9 @@ def sync_custom_fields():
 	add_delivery_status()
 	add_company_fields()
 	add_mes_fields()
+	add_receipt_request_hash()
 	add_issue_category()
+	update_receipt_client_script()
 
 
 def after_install():

@@ -37,6 +37,8 @@ mes_integration.patches.v1_0.add_delivered_delivery_note_readiness_status
 mes_integration.patches.v1_0.add_company_integration_switches
 
 mes_integration.patches.v1_0.add_mes_custom_fields
+mes_integration.patches.v1_0.add_mes_receipt_request_hash
+mes_integration.patches.v1_0.update_mes_receipt_number_client_script
 mes_integration.patches.v1_0.add_material_request_issue_category
 
 mes_integration.patches.v1_0.remove_material_request_mes_status

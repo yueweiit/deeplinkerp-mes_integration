@@ -459,6 +459,21 @@ MES_RECEIPT_STOCK_ENTRY_TYPES = {
     STANDARD_MATERIAL_RECEIPT,
 }
 MES_RECEIPT_WAREHOUSE_FIELD = "custom_mes_receipt_warehouse"
+MES_RECEIPT_REQUEST_HASH_FIELD = "custom_mes_receipt_request_hash"
+MES_RECEIPT_REVIEW_SETTING = "mes_receipt_requires_review"
+MES_RECEIPT_PROTECTED_FIELDS = (
+    "company",
+    "stock_entry_type",
+    "purpose",
+    "custom_stock_entry_no",
+    "custom_sales_order",
+    "custom_mes_receipt",
+)
+MES_RECEIPT_PROTECTED_ITEM_FIELDS = (
+    "name", "item_code", "uom", "stock_uom", "conversion_factor",
+    "s_warehouse", "batch_no", "serial_no", "serial_and_batch_bundle",
+    "is_finished_item", "is_scrap_item", "allow_zero_valuation_rate",
+)
 MES_DELIVERY_WAREHOUSE_FIELD = "custom_mes_delivery_warehouse"
 MES_MANUFACTURING_WAREHOUSE_FIELD = "custom_mes_manufacturing_warehouse"
 MES_RECEIPT_IDEMPOTENCY_LOCK_TIMEOUT_SECONDS = 30
@@ -467,6 +482,54 @@ DLM_ISSUE_STOCK_ENTRY_TYPES = {
     "Material Transfer for Manufacture",
     "Injection Molding Issuance",
 }
+
+
+def validate_reviewed_mes_receipt_identity(stock_entry, method=None):
+    """Keep MES receipt routing stable while reviewers edit quantities and warehouses."""
+    previous = stock_entry.get_doc_before_save()
+    request_hash = stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD)
+    if not previous:
+        if request_hash and not (stock_entry.flags.get("mes_receipt_request") and is_mes_api_user()):
+            frappe.throw(_("只能通过 MES 入库接口创建带审核标识的物料移动"))
+        return
+
+    saved_hash = previous.get(MES_RECEIPT_REQUEST_HASH_FIELD)
+    if (request_hash or "") != (saved_hash or ""):
+        frappe.throw(_("MES 入库审核单的来源信息不可修改；请只核对明细、数量和仓库"))
+    if not saved_hash:
+        return
+
+    for fieldname in MES_RECEIPT_PROTECTED_FIELDS:
+        before = previous.get(fieldname)
+        after = stock_entry.get(fieldname)
+        if fieldname == "custom_mes_receipt":
+            changed = cint(before) != cint(after)
+        else:
+            changed = (before or "") != (after or "")
+        if changed:
+            frappe.throw(_("MES 入库审核单的来源信息不可修改；请只核对明细、数量和仓库"))
+
+    before_items = {row.name: row for row in previous.get("items", [])}
+    after_items = {row.name: row for row in stock_entry.get("items", [])}
+    if (
+        not all(before_items)
+        or len(before_items) != len(previous.get("items", []))
+        or len(after_items) != len(stock_entry.get("items", []))
+        or before_items.keys() != after_items.keys()
+    ):
+        frappe.throw(_("MES 入库审核单的物料明细不可增删或替换；请只修改数量和目标仓库"))
+    for name, before in before_items.items():
+        after = after_items[name]
+        for fieldname in MES_RECEIPT_PROTECTED_ITEM_FIELDS:
+            number = fieldname == "conversion_factor"
+            integer = fieldname in ("is_finished_item", "is_scrap_item", "allow_zero_valuation_rate")
+            if integer:
+                old, new = cint(before.get(fieldname)), cint(after.get(fieldname))
+            else:
+                old = get_mes_receipt_item_identity_value(before, fieldname, numeric=number)
+                new = get_mes_receipt_item_identity_value(after, fieldname, numeric=number)
+            if old != new:
+                frappe.throw(_("MES 入库审核单的物料明细不可增删或替换；请只修改数量和目标仓库"))
 
 
 @frappe.whitelist(methods=["POST"])
@@ -503,6 +566,8 @@ def create_draft_stock_entry_from_mes(data=None, stock_entry=None, submit=False)
 
     stock_entry_data.pop("sales_order", None)
     stock_entry_data.pop("sales_order_name", None)
+    # The fingerprint is ERP-owned metadata, never accepted from MES payloads.
+    stock_entry_data.pop(MES_RECEIPT_REQUEST_HASH_FIELD, None)
     if not stock_entry_data.get("company") and sales_order_doc:
         stock_entry_data["company"] = sales_order_doc.company
     if not is_mes_integration_enabled(stock_entry_data.get("company")):
@@ -514,6 +579,17 @@ def create_draft_stock_entry_from_mes(data=None, stock_entry=None, submit=False)
     mark_mes_receipt_stock_entry(stock_entry_data)
     set_mes_stock_entry_sales_order(stock_entry_data, sales_order_doc)
     receipt_no = (stock_entry_data.get("custom_stock_entry_no") or "").strip()
+    review_required = cint(frappe.conf.get(MES_RECEIPT_REVIEW_SETTING)) == 1
+    if review_required and not receipt_no:
+        frappe.throw(_("MES 入库待审核模式要求提供唯一入库编号"))
+    if review_required:
+        stock_entry_data["custom_stock_entry_no"] = receipt_no
+    if review_required and not frappe.db.has_column("Stock Entry", MES_RECEIPT_REQUEST_HASH_FIELD):
+        frappe.throw(_("MES 入库待审核字段尚未安装，请先完成站点迁移"))
+    request_hash = get_mes_receipt_request_hash(stock_entry_data, sales_order_doc)
+    if review_required:
+        stock_entry_data[MES_RECEIPT_REQUEST_HASH_FIELD] = request_hash
+    should_submit = bool(cint(submit)) and not review_required
 
     # The idempotency lock covers the lookup and insert. A plain exists() check
     # is not enough because two concurrent MES retries could both see no row.
@@ -534,7 +610,14 @@ def create_draft_stock_entry_from_mes(data=None, stock_entry=None, submit=False)
                     f"{existing_stock_entry.name}，不能重新创建。"
                 )
 
-            if cint(submit) and existing_stock_entry.docstatus == 0:
+            # Adopt a matching legacy draft when review mode is enabled. The
+            # saved fingerprint then survives later human edits and a flag rollback.
+            if review_required and existing_stock_entry.docstatus == 0 and not existing_stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD):
+                existing_stock_entry.db_set(MES_RECEIPT_REQUEST_HASH_FIELD, request_hash)
+
+            # A reviewed draft cannot be submitted by a retried MES request,
+            # even if the site setting changes after the draft was created.
+            if should_submit and existing_stock_entry.docstatus == 0 and not existing_stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD):
                 existing_stock_entry.flags.mes_receipt_request = True
                 existing_stock_entry.submit()
                 existing_stock_entry.reload()
@@ -556,7 +639,7 @@ def create_draft_stock_entry_from_mes(data=None, stock_entry=None, submit=False)
         stock_entry_doc.db_set("stock_entry_type", stock_entry_type, update_modified=False)
         stock_entry_doc.reload()
 
-        if cint(submit):
+        if should_submit:
             stock_entry_doc.flags.mes_receipt_request = True
             stock_entry_doc.submit()
             stock_entry_doc.reload()
@@ -678,6 +761,10 @@ def validate_mes_receipt_identity(stock_entry, request_data, sales_order_doc):
 
 def get_mes_receipt_identity_mismatches(stock_entry, request_data, sales_order_doc):
     """Return fields that differ between an ERP receipt and an MES request."""
+    saved_hash = stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD)
+    if saved_hash:
+        return [] if saved_hash == get_mes_receipt_request_hash(request_data, sales_order_doc) else ["request_hash"]
+
     mismatches = []
     if stock_entry.company != request_data.get("company"):
         mismatches.append("company")
@@ -708,6 +795,23 @@ def get_mes_receipt_identity_mismatches(stock_entry, request_data, sales_order_d
         mismatches.append("items")
 
     return mismatches
+
+
+def get_mes_receipt_request_hash(request_data, sales_order_doc):
+    """Identify the original MES request independently of editable ERP draft fields."""
+    item_identities = get_mes_receipt_item_identity(request_data.get("items"))
+    item_identities.sort(key=lambda row: json.dumps(row, ensure_ascii=False, sort_keys=True, default=str))
+    identity = {
+        "company": request_data.get("company"),
+        "stock_entry_type": request_data.get("stock_entry_type"),
+        "custom_stock_entry_no": (request_data.get("custom_stock_entry_no") or "").strip(),
+        "sales_order": sales_order_doc.name if sales_order_doc else None,
+        "posting_date": get_mes_receipt_header_identity_value("posting_date", request_data.get("posting_date")),
+        "posting_time": get_mes_receipt_header_identity_value("posting_time", request_data.get("posting_time")),
+        "items": item_identities,
+    }
+    canonical = json.dumps(identity, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def mes_receipt_items_match(request_items, existing_items):
@@ -846,6 +950,7 @@ def build_mes_stock_entry_response(stock_entry, sales_order_doc, reused=False):
         "stock_entry_type": stock_entry.stock_entry_type,
         "stock_entry_docstatus": stock_entry.docstatus,
         "submitted": submitted,
+        "review_required": bool(stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD)),
         "idempotent_reuse": reused,
         "sales_order": sales_order_doc.name if sales_order_doc else None,
         "sales_order_crm_order_no": (
@@ -1476,6 +1581,21 @@ def build_stock_entry_status_payload(
     if reference_no:
         payload["referenceNo"] = reference_no
 
+    if payload_docstatus == 1 and stock_entry.get(MES_RECEIPT_REQUEST_HASH_FIELD):
+        payload["payloadVersion"] = 2
+        payload["actualItems"] = [
+            {
+                "stockEntryDetail": row.name,
+                "itemCode": row.item_code,
+                "qty": flt(row.qty),
+                "uom": row.uom,
+                "transferQty": flt(row.transfer_qty),
+                "stockUom": row.stock_uom,
+                "tWarehouse": row.t_warehouse,
+            }
+            for row in stock_entry.get("items", [])
+        ]
+
     return payload
 
 
@@ -1533,6 +1653,15 @@ def validate_stock_entry_status_response(response, payload):
             get_mes_error_message(response)
             or frappe._("MES 状态回写业务状态异常：{0}").format(status)
         )
+
+    if payload.get("payloadVersion") == 2 and (
+        data.get("payloadVersion") != 2
+        or data.get("erpStockEntryName") != payload.get("erpStockEntryName")
+        or type(data.get("actualItemsProcessed")) is not int
+        or data["actualItemsProcessed"] != len(payload["actualItems"])
+    ):
+        log_mes_push_error("MES 未完整确认实际入库明细", payload, response)
+        frappe.throw(_("MES 未完整确认实际入库明细，请核对原库存单据后补推"))
 
 
 def get_mes_status_callback_url():

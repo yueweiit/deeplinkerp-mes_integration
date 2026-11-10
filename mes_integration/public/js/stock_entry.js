@@ -177,7 +177,10 @@ const MES_DLM_STOCK_ENTRY_TYPES = [
 ];
 
 function is_mes_receipt_stock_entry(frm) {
-	return frm && frm.doc && MES_RECEIPT_STOCK_ENTRY_TYPES.includes(frm.doc.stock_entry_type);
+	return frm && frm.doc && (
+		MES_RECEIPT_STOCK_ENTRY_TYPES.includes(frm.doc.stock_entry_type) ||
+		(frm.doc.stock_entry_type === STANDARD_MATERIAL_RECEIPT && cint(frm.doc.custom_mes_receipt) === 1)
+	);
 }
 
 function is_mes_receipt_quantity_stock_entry(frm) {
