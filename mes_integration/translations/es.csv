@@ -162,6 +162,7 @@
 "{0} {1}个","{0} {1} unidades"
 "入库数量（库存单位）","Cantidad recibida (unidad de stock)"
 "目标仓当前库存","Stock actual del almacén de destino"
+"目标仓过账时点库存","Existencias del almacén de destino al contabilizar"
 MES 系统,Sistema MES
 新窗口打开,Abrir en una ventana nueva
 正在加载 MES 系统,Cargando el sistema MES

@@ -74,6 +74,7 @@ MES 重试入库请求时必须继续使用原来的 `custom_stock_entry_no`，E
 提交入库后，系统会向 `mes_status_callback_url` 回调 Stock Entry 状态；MES 接口需要返回 HTTP 2xx 的 JSON，并且 `success: true`、`data.status: "processed"`。
 
 入库单在 `docstatus=1` 后才生成库存流水并增加 `t_warehouse` 的库存；`docstatus=0` 的草稿不影响库存。服务端统一使用 `Material Receipt` purpose，入库明细不保留来源仓，因此不会扣减 ERP 库存。
+Stock Entry 表单对 `Material Receipt` 用途的明细将 `transfer_qty` 显示为“入库数量（库存单位）”、将只读 `actual_qty` 显示为“目标仓过账时点库存”；切换为其他用途时恢复原标签。后者按单据过账日期和时间读取此前库存流水，不一定等于今天的即时库存。仅安装本 App 时使用本 App 的标签逻辑；同时安装 `deeplinkerp_branding` 时复用其表单标签逻辑，并支持 MES 专用入库类型。字段身份、数量校验和库存计算不变，来源仓为空的原生入库规则继续生效。
 
 异步接口返回的是“已接收并返回任务号”，压测脚本统计的是 MES 到 ERP 的接收耗时，不是后台建单耗时。
 

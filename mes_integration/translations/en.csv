@@ -169,6 +169,7 @@ sourceSystem 必须为 MES。,sourceSystem must be MES.
 生成物料移动,Create stock movement
 目标仓库,Target warehouse
 目标仓当前库存,Target warehouse current inventory
+目标仓过账时点库存,Target warehouse stock at posting time
 确定,OK
 确认保存、提交并推送此物料移动至 DLM？,"Confirm to save, submit and push this material to DLM?"
 确认保存并提交此物料移动？,Confirm to save and submit this material move?

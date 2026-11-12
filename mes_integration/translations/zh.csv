@@ -67,6 +67,7 @@
 "缺少 MES 推送接口配置：mes_push_authorization","缺少 MES 推送接口配置：mes_push_authorization"
 "入库数量（库存单位）","入库数量（库存单位）"
 "目标仓当前库存","目标仓当前库存"
+"目标仓过账时点库存","目标仓过账时点库存"
 Applied Value,应用价值
 Attempts,尝试
 Category backfill review digest mismatch,类别回填评论摘要不匹配

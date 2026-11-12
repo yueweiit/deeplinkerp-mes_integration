@@ -36,6 +36,10 @@ frappe.ui.form.on("Stock Entry", {
 		});
 	},
 
+	purpose: function(frm) {
+		refresh_mes_receipt_quantity_labels(frm);
+	},
+
 	validate: function(frm) {
 		if (is_mes_integration_enabled(frm)) {
 			sync_mes_stock_entry_fields(frm, { immediate: true });
@@ -198,6 +202,12 @@ function is_mes_receipt_quantity_stock_entry(frm) {
 }
 
 function refresh_mes_receipt_quantity_labels(frm) {
+	const sharedLabels = globalThis.DeepLinkERPStockEntryQuantityLabels;
+	if (sharedLabels && typeof sharedLabels.refresh === "function") {
+		sharedLabels.refresh(frm, is_mes_integration_enabled(frm) && is_mes_receipt_quantity_stock_entry(frm));
+		return;
+	}
+
 	const grid = frm && frm.fields_dict && frm.fields_dict.items
 		? frm.fields_dict.items.grid
 		: null;
@@ -219,9 +229,9 @@ function refresh_mes_receipt_quantity_labels(frm) {
 	}
 
 	const originalLabels = frm._mes_original_stock_entry_quantity_labels;
-	const useReceiptLabels = (
-		is_mes_integration_enabled(frm) && is_mes_receipt_quantity_stock_entry(frm)
-	);
+	const useReceiptLabels = frm.doc.purpose === "Material Receipt" ||
+		(!frm.doc.purpose && frm.doc.stock_entry_type === STANDARD_MATERIAL_RECEIPT) ||
+		(is_mes_integration_enabled(frm) && is_mes_receipt_quantity_stock_entry(frm));
 	grid.update_docfield_property(
 		"transfer_qty",
 		"label",
@@ -230,7 +240,7 @@ function refresh_mes_receipt_quantity_labels(frm) {
 	grid.update_docfield_property(
 		"actual_qty",
 		"label",
-		useReceiptLabels ? __("目标仓当前库存") : originalLabels.actual_qty
+		useReceiptLabels ? __("目标仓过账时点库存") : originalLabels.actual_qty
 	);
 }
 
